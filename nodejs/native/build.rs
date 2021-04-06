@@ -1,7 +1,10 @@
+use std::env;
+
 extern crate neon_build;
 
 fn main() {
-    neon_build::setup(); // must be called in build.rs
+    let out_dir = env::var_os("CARGO_MANIFEST_DIR").unwrap();
+    std::fs::create_dir_all(std::path::Path::new(&out_dir).join("build")).unwrap();
 
-    // add project-specific build logic here...
+    neon_build::Setup::options().output_dir("build").setup();
 }

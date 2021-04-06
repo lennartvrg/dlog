@@ -1,39 +1,46 @@
 use native::models::Priority;
 use neon::prelude::*;
-use once_cell::sync::OnceCell;
 
 mod extractor;
 
 use crate::extractor::Extractor;
 
-static LOGGER: OnceCell<native::Logger> = OnceCell::new();
+pub struct Logger(native::Logger);
 
-fn logger<'a>() -> &'a native::Logger {
-    match LOGGER.get() {
-        None => panic!("You need to call configure() before using dlog"),
-        Some(val) => val,
-    }
+impl Finalize for Logger {}
+
+fn clean_up(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    cx.context()?.0.clean_up();
+    Ok(JsUndefined::new(&mut cx))
 }
 
-fn configure(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
     let api_key = cx.argument::<JsString>(0)?.value(&mut cx);
-    LOGGER.set(native::Logger::new(api_key)).unwrap();
-    Ok(JsUndefined::new(&mut cx))
+    Ok(cx.boxed(Logger(native::Logger::new(api_key))))
 }
 
 fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    logger().log(Priority::Critical, cx.extract()?.value(&mut cx));
-    Ok(JsUndefined::new(&mut cx))
+    let message = cx.extract()?.value(&mut cx);
+    match cx.context()?.0.log(Priority::Critical, message) {
+        Err(err) => cx.throw_error(err),
+        Ok(_) => Ok(JsUndefined::new(&mut cx)),
+    }
 }
 
 fn error(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    logger().log(Priority::Critical, cx.extract()?.value(&mut cx));
-    Ok(JsUndefined::new(&mut cx))
+    let message = cx.extract()?.value(&mut cx);
+    match cx.context()?.0.log(Priority::Critical, message) {
+        Err(err) => cx.throw_error(err),
+        Ok(_) => Ok(JsUndefined::new(&mut cx)),
+    }
 }
 
-register_module!(mut cx, {
+#[neon::main]
+fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("configure", configure)?;
+    cx.export_function("cleanUp", clean_up)?;
     cx.export_function("log", log)?;
     cx.export_function("error", error)?;
+
     Ok(())
-});
+}
