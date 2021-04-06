@@ -39,6 +39,9 @@ jobs:
       - name: Get dependencies
         run: npm install
 
+      - name: Install AWS SDK
+        run: npm install aws-sdk
+
       - name: Build and upload-binary
         env:
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
