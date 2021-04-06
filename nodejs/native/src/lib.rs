@@ -5,9 +5,9 @@ mod extractor;
 
 use crate::extractor::Extractor;
 
-pub struct Logger (native::Logger);
+pub struct Logger(native::Logger);
 
-impl Finalize for Logger { }
+impl Finalize for Logger {}
 
 fn clean_up(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     cx.context()?.0.clean_up();
@@ -23,7 +23,7 @@ fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let message = cx.extract()?.value(&mut cx);
     match cx.context()?.0.log(Priority::Critical, message) {
         Err(err) => cx.throw_error(err),
-        Ok(_) => Ok(JsUndefined::new(&mut cx))
+        Ok(_) => Ok(JsUndefined::new(&mut cx)),
     }
 }
 
@@ -31,7 +31,7 @@ fn error(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let message = cx.extract()?.value(&mut cx);
     match cx.context()?.0.log(Priority::Critical, message) {
         Err(err) => cx.throw_error(err),
-        Ok(_) => Ok(JsUndefined::new(&mut cx))
+        Ok(_) => Ok(JsUndefined::new(&mut cx)),
     }
 }
 

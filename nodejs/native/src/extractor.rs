@@ -1,6 +1,6 @@
 use neon::context::FunctionContext;
 use neon::result::JsResult;
-use neon::types::{JsArray, JsString, JsBox};
+use neon::types::{JsArray, JsBox, JsString};
 
 use crate::Logger;
 

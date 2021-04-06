@@ -1,0 +1,37 @@
+name: Publish NodeJS adapter
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            TARGET: x86_64-apple-darwin
+          - os: windows-latest
+            TARGET: x86_64-pc-windows-msvc
+          - os: ubuntu-latest
+            TARGET: x86_64-unknown-linux-gnu
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Build configuration
+        run: echo "Building for ${{matrix.TARGET}}"
+
+      - name: Setup cargo toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{matrix.TARGET}}
+          override: true
+
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+
+      - name: Build and publish
+        run: npm run publish
