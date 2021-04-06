@@ -1,6 +1,6 @@
 [package]
 name = "dlog-nodejs"
-version = "0.0.3"
+version = "0.0.5"
 authors = ["Lennart Voorgang <lennart@voorgang.eu>"]
 license = "MIT"
 build = "build.rs"

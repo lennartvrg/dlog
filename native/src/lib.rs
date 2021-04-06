@@ -1,5 +1,8 @@
 use crate::ingestor::HttpIngestor;
 use crate::models::{Log, Priority};
+use std::thread::JoinHandle;
+use std::sync::{Arc, RwLock};
+use std::sync::atomic::{AtomicBool, Ordering};
 
 mod ingestor;
 pub mod models;
@@ -11,17 +14,22 @@ const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_secs(1
 #[derive(Debug)]
 pub struct Logger {
     sender: flume::Sender<Log>,
+    flag: Arc<AtomicBool>,
+    handle: Arc<RwLock<Option<JoinHandle<()>>>>
 }
 
 impl Logger {
     pub fn new(api_key: String) -> Self {
         let (sender, receiver) = flume::bounded::<Log>(QUEUE_BUFFER);
 
-        std::thread::spawn(move || {
+        let flag = Arc::new(AtomicBool::new(false));
+        let thread_flag = flag.clone();
+
+        let handle = std::thread::spawn(move || {
             let client = HttpIngestor::new(api_key);
             let mut queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
 
-            loop {
+            while !thread_flag.load(Ordering::Relaxed) {
                 let flush = match receiver.recv_timeout(MIN_FLUSH_INTERVAL) {
                     Err(flume::RecvTimeoutError::Disconnected) => break,
                     Err(flume::RecvTimeoutError::Timeout) => true,
@@ -37,15 +45,21 @@ impl Logger {
                 }
             }
 
-            println!("Shutting down dlog ingest");
+            client.log(queue);
         });
 
-        Self { sender }
+        Self { sender, flag, handle: Arc::new(RwLock::new(Some(handle))) }
     }
 
-    pub fn log(&self, priority: Priority, message: String) {
-        if let Err(err) = self.sender.send(Log::new(priority, message)) {
-            println!("Failed to move log to sender: {}", err);
+    pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {
+        match self.sender.send(Log::new(priority, message)) {
+            Err(err) => Err(format!("Failed to move log to sender: {}", err)),
+            Ok(_) => Ok(()),
         }
+    }
+
+    pub fn clean_up(&self) {
+        self.flag.store(true, Ordering::Relaxed);
+        self.handle.write().unwrap().take().unwrap().join().unwrap();
     }
 }

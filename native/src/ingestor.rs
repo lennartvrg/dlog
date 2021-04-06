@@ -17,14 +17,16 @@ impl HttpIngestor {
     }
 
     pub fn log(&self, logs: Vec<Log>) {
-        if let Err(err) = self
-            .client
-            .post("https://log.dlog.cloud")
-            .json(&LogRequest { logs })
-            .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
-            .send()
-        {
-            println!("Failed to send logs: {}", err);
+        if logs.len() > 0 {
+            if let Err(err) = self
+                .client
+                .post("https://log.dlog.cloud")
+                .json(&LogRequest { logs })
+                .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
+                .send()
+            {
+                println!("Failed to send logs: {}", err);
+            }
         }
     }
 }
