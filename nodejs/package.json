@@ -1,0 +1,20 @@
+{
+  "name": "dlog-nodejs",
+  "version": "0.0.2",
+  "description": "Pure Node.JS bindings for dlog",
+  "main": "lib/index.js",
+  "author": "lennartvrg",
+  "license": "MIT",
+  "dependencies": {
+    "neon-cli": "^0.8.0"
+  },
+  "scripts": {
+    "install": "neon build"
+  },
+  "homepage": "https://github.com/lennartvrg/dlog",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lennartvrg/dlog",
+    "directory": "nodejs"
+  }
+}
