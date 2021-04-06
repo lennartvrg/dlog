@@ -1,4 +1,4 @@
-var addon = require('../native');
+var addon = require('../native/lib');
 
 module.exports.configure = function (api_key) {
     var instance = addon.configure(api_key)

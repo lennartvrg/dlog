@@ -1,9 +1,13 @@
 {
   "name": "dlog-nodejs",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Pure Node.JS bindings for dlog",
   "main": "lib/index.js",
   "author": "lennartvrg",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "license": "MIT",
   "dependencies": {
     "@mapbox/node-pre-gyp": "^1.0.3",
@@ -31,8 +35,8 @@
     "module_name": "index",
     "host": "https://github.com/lennartvrg/dlog/releases/download/",
     "remote_path": "{version}",
-    "package_name": "{node_abi}-{platform}-{arch}.tar.gz",
-    "module_path": "./native/build",
+    "package_name": "dlog-{platform}-{arch}.tar.gz",
+    "module_path": "./native/lib",
     "pkg_path": "."
   }
 }

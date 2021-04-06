@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "native",
+    "nodejs/native"
+]
