@@ -13,14 +13,11 @@
     "@mapbox/node-pre-gyp": "^1.0.3",
     "neon-cli": "^0.8.0"
   },
-  "devDependencies": {
-    "node-pre-gyp-github": "^1.4.3"
-  },
   "scripts": {
     "build": "cd native && cargo build",
     "build-release": "cd native && cargo build --release",
     "install": "node-pre-gyp install --fallback-to-build=false || npm run build-release",
-    "upload-binary": "npm run build-release && node-pre-gyp package && node-pre-gyp-github publish"
+    "upload-binary": "npm run build-release && node-pre-gyp package && node-pre-gyp publish"
   },
   "homepage": "https://github.com/lennartvrg/dlog",
   "repository": {
@@ -33,9 +30,9 @@
   ],
   "binary": {
     "module_name": "index",
-    "host": "https://github.com/lennartvrg/dlog/releases/download/",
+    "host": "https://dlog-native.eu-central-1.amazonaws.com",
     "remote_path": "{version}",
-    "package_name": "dlog-{platform}-{arch}.tar.gz",
+    "package_name": "native-{platform}-{arch}.tar.gz",
     "module_path": "./native/lib",
     "pkg_path": "."
   }
