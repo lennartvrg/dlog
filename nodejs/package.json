@@ -6,15 +6,37 @@
   "author": "lennartvrg",
   "license": "MIT",
   "dependencies": {
-    "neon-cli": "^0.8.0"
+    "neon-cli": "^0.8.0",
+    "node-pre-gyp": "^0.17.0"
+  },
+  "devDependencies": {
+    "node-pre-gyp-github": "^1.4.3"
   },
   "scripts": {
-    "install": "neon build"
+    "build": "neon build",
+    "build-release": "neon build --release",
+    "install": "node-pre-gyp install --fallback-to-build=false || cd native && cargo build --release",
+    "package": "node-pre-gyp package",
+    "test": "npm run build && npm run spec",
+    "upload-binary": "npm run build-release && node-pre-gyp package && node-pre-gyp-github publish",
+    "version": "npm run build-release"
   },
   "homepage": "https://github.com/lennartvrg/dlog",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lennartvrg/dlog",
+    "url": "https://github.com/lennartvrg/dlog.git",
     "directory": "nodejs"
+  },
+  "files": [
+    "native/index.node",
+    "lib"
+  ],
+  "binary": {
+    "module_name": "index",
+    "host": "https://github.com/lennartvrg/dlog/releases/download/",
+    "remote_path": "{version}",
+    "package_name": "{node_abi}-{platform}-{arch}.tar.gz",
+    "module_path": "./native",
+    "pkg_path": "."
   }
 }

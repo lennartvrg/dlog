@@ -1,0 +1,23 @@
+[package]
+name = "dlog-nodejs"
+version = "0.1.0"
+authors = ["Lennart Voorgang <lennart@voorgang.eu>"]
+license = "MIT"
+build = "build.rs"
+edition = "2018"
+exclude = ["artifacts.json", "index.node"]
+
+[lib]
+name = "dlog"
+crate-type = ["cdylib"]
+
+[build-dependencies]
+neon-build = "0.8.0"
+
+[dependencies]
+neon = { version = "0.8.0", default-features = false, features = ["napi-4"] }
+serde = "1.0.125"
+once_cell = "1.7.2"
+serde_json = "1.0.64"
+
+native = { path = "../../native" }
