@@ -9,6 +9,7 @@ jobs:
     runs-on: ${{ matrix.OS }}
     defaults:
       run:
+        shell: bash
         working-directory: ./nodejs
     strategy:
       matrix:
@@ -54,8 +55,6 @@ jobs:
           use-cross: ${{ matrix.CROSS }}
 
       - name: Get dependencies
-        env:
-          CARGO_BUILD_TARGET: ${{ matrix.TARGET }}
         run: npm install
 
       - name: Install AWS SDK
