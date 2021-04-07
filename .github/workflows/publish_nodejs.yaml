@@ -34,7 +34,7 @@ jobs:
   build:
     runs-on: ${{ matrix.OS }}
     needs: check
-    if: ${{ needs.check.outputs.changed == 'true' }}
+    if: ${{ jobs.check.outputs.changed == 'true' }}
     defaults:
       run:
         working-directory: ./nodejs
