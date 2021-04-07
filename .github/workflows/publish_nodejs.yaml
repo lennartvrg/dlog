@@ -5,7 +5,7 @@ on:
       - master
 
 jobs:
-  build_macos:
+  build:
     runs-on: ${{ matrix.OS }}
     defaults:
       run:
@@ -14,90 +14,16 @@ jobs:
       matrix:
         include:
           - OS: macos-latest
+            ARCH: x64
             TARGET: x86_64-apple-darwin
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-
-      - name: Build configuration
-        run: echo "Building for ${{matrix.TARGET}}"
-
-      - name: Setup cargo toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{matrix.TARGET}}
-          override: true
-
-      - name: Setup NodeJs
-        uses: actions/setup-node@v1
-
-      - name: Get dependencies
-        run: npm install
-
-      - name: Install AWS SDK
-        run: npm install aws-sdk
-
-      - name: Build and upload-binary
-        env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        run: npm run upload-binary
-
-  build_windows:
-    runs-on: ${{ matrix.OS }}
-    defaults:
-      run:
-        working-directory: ./nodejs
-    strategy:
-      matrix:
-        include:
           - OS: windows-latest
+            ARCH: x64
             TARGET: x86_64-pc-windows-msvc
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-
-      - name: Build configuration
-        run: echo "Building for ${{matrix.TARGET}}"
-
-      - name: Setup cargo toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{matrix.TARGET}}
-          override: true
-
-      - name: Setup NodeJs
-        uses: actions/setup-node@v1
-
-      - name: Get dependencies
-        run: npm install
-
-      - name: Install AWS SDK
-        run: npm install aws-sdk
-
-      - name: Build and upload-binary
-        env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-        run: npm run upload-binary
-
-  build_linux:
-    runs-on: ${{ matrix.OS }}
-    container:
-      image: ${{ matrix.IMAGE }}
-    defaults:
-      run:
-        working-directory: ./nodejs
-    strategy:
-      matrix:
-        include:
           - OS: ubuntu-latest
-            IMAGE: ubuntu-latest
+            ARCH: x64
             TARGET: x86_64-unknown-linux-gnu
           - OS: ubuntu-latest
-            IMAGE: aarch64/ubuntu
+            ARCH: arm64
             TARGET: aarch64-unknown-linux-gnu
     steps:
       - name: Checkout the repository
@@ -124,6 +50,7 @@ jobs:
 
       - name: Build and upload-binary
         env:
-          AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          ARCH: ${{ matrix.ARCH }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: npm run upload-binary
