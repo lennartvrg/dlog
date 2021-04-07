@@ -15,23 +15,21 @@ jobs:
         include:
           - OS: macos-latest
             ARCH: x64
+            CROSS: false
             TARGET: x86_64-apple-darwin
           - OS: windows-latest
             ARCH: x64
+            CROSS: false
             TARGET: x86_64-pc-windows-msvc
           - OS: ubuntu-latest
             ARCH: x64
+            CROSS: false
             TARGET: x86_64-unknown-linux-gnu
           - OS: ubuntu-latest
             ARCH: arm64
+            CROSS: true
             TARGET: aarch64-unknown-linux-gnu
     steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v2
-
-      - name: Build configuration
-        run: echo "Building for ${{ matrix.TARGET }}"
-
       - name: Setup cargo toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -39,11 +37,21 @@ jobs:
           target: ${{ matrix.TARGET }}
           override: true
 
-      - uses: actions-rs/cargo@v1
+      - name: Setup NodeJs
+        uses: actions/setup-node@v1
+
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Build configuration
+        run: echo "Building for ${{ matrix.TARGET }}"
+
+      - name: Build rust
+        uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
-          use-cross: true
+          args: --release --target ${{ matrix.TARGET }}
+          use-cross: ${{ matrix.CROSS }}
 
       - name: Get dependencies
         env:
