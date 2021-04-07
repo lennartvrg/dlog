@@ -9,7 +9,6 @@ jobs:
     runs-on: ${{ matrix.OS }}
     defaults:
       run:
-        shell: bash
         working-directory: ./nodejs
     strategy:
       matrix:
@@ -62,8 +61,6 @@ jobs:
 
       - name: Build and upload-binary
         env:
-          ARCH: ${{ matrix.ARCH }}
-          CARGO_BUILD_TARGET: ${{ matrix.TARGET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: npm run upload-binary
+        run: npx node-pre-gyp package publish --target_arch=${{ matrix.ARCH }
