@@ -64,7 +64,7 @@ impl Logger {
     }
 
     pub fn clean_up(&self) {
-        self.flag.store(true, Ordering::Acquire);
+        self.flag.store(true, Ordering::Relaxed);
         self.handle.write().unwrap().take().unwrap().join().unwrap();
     }
 }

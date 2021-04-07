@@ -112,4 +112,5 @@ jobs:
       - name: Publish package to NPM
         uses: JS-DevTools/npm-publish@v1
         with:
+          package: ./nodejs/package.json
           token: ${{ secrets.NPM_ACCESS_TOKEN }}
