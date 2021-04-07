@@ -39,8 +39,11 @@ jobs:
           target: ${{ matrix.TARGET }}
           override: true
 
-      - name: Setup NodeJs
-        uses: actions/setup-node@v1
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+          use-cross: true
 
       - name: Get dependencies
         env:

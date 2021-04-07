@@ -16,8 +16,8 @@
   "scripts": {
     "build": "cd native && cargo build",
     "build-release": "cd native && cargo build --release",
-    "install": "node-pre-gyp install --fallback-to-build=false || npm run build-release",
-    "upload-binary": "npm run build-release && node-pre-gyp package publish --target_arch=$ARCH"
+    "postinstall": "node-pre-gyp install --fallback-to-build=false",
+    "upload-binary": "node-pre-gyp package publish --target_arch=$ARCH"
   },
   "homepage": "https://github.com/lennartvrg/dlog",
   "repository": {
