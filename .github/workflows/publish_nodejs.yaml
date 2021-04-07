@@ -13,9 +13,12 @@ jobs:
 
       - name: Check NPM package version
         id: check
-        uses: EndBug/version-check@v1
+        uses: EndBug/version-check@v2.0.1
         with:
+          diff-search: true
           file-name: ./nodejs/package.json
+          file-url: https://unpkg.com/dlog-nodejs@latest/package.json
+          static-checking: localIsNew
 
       - name: Debug check
         run: echo ${{ steps.check.outputs.changed }}
