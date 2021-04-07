@@ -30,19 +30,21 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build configuration
-        run: echo "Building for ${{matrix.TARGET}}"
+        run: echo "Building for ${{ matrix.TARGET }}"
 
       - name: Setup cargo toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          target: ${{matrix.TARGET}}
+          target: ${{ matrix.TARGET }}
           override: true
 
       - name: Setup NodeJs
         uses: actions/setup-node@v1
 
       - name: Get dependencies
+        env:
+          TARGET: ${{ matrix.TARGET }}
         run: npm install
 
       - name: Install AWS SDK
@@ -51,6 +53,7 @@ jobs:
       - name: Build and upload-binary
         env:
           ARCH: ${{ matrix.ARCH }}
+          TARGET: ${{ matrix.TARGET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: npm run upload-binary
