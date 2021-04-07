@@ -44,7 +44,7 @@ jobs:
 
       - name: Get dependencies
         env:
-          TARGET: ${{ matrix.TARGET }}
+          CARGO_BUILD_TARGET: ${{ matrix.TARGET }}
         run: npm install
 
       - name: Install AWS SDK
@@ -53,7 +53,7 @@ jobs:
       - name: Build and upload-binary
         env:
           ARCH: ${{ matrix.ARCH }}
-          TARGET: ${{ matrix.TARGET }}
+          CARGO_BUILD_TARGET: ${{ matrix.TARGET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: npm run upload-binary
