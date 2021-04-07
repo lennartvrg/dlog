@@ -6,7 +6,6 @@ pub enum Priority {
     Critical,
 }
 
-
 #[derive(Serialize, Deserialize)]
 pub struct Log {
     pub timestamp: DateTime<Utc>,

@@ -1,11 +1,12 @@
-use crate::ingestor::HttpIngestor;
-use crate::models::{Log, Priority};
-use std::thread::JoinHandle;
-use std::sync::{Arc, RwLock};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, RwLock};
+use std::thread::JoinHandle;
 
 mod ingestor;
 pub mod models;
+
+use crate::ingestor::HttpIngestor;
+use crate::models::{Log, Priority};
 
 const QUEUE_BUFFER: usize = 1_000;
 
@@ -15,7 +16,7 @@ const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_secs(1
 pub struct Logger {
     sender: flume::Sender<Log>,
     flag: Arc<AtomicBool>,
-    handle: Arc<RwLock<Option<JoinHandle<()>>>>
+    handle: RwLock<Option<JoinHandle<()>>>,
 }
 
 impl Logger {
@@ -48,7 +49,11 @@ impl Logger {
             client.log(queue);
         });
 
-        Self { sender, flag, handle: Arc::new(RwLock::new(Some(handle))) }
+        Self {
+            sender,
+            flag,
+            handle: RwLock::new(Some(handle)),
+        }
     }
 
     pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {
@@ -59,7 +64,7 @@ impl Logger {
     }
 
     pub fn clean_up(&self) {
-        self.flag.store(true, Ordering::Relaxed);
+        self.flag.store(true, Ordering::Acquire);
         self.handle.write().unwrap().take().unwrap().join().unwrap();
     }
 }
