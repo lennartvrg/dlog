@@ -20,7 +20,7 @@ jobs:
           static-checking: localIsNew
 
       - name: Debug check
-        run: 'echo "Output: ${{ steps.check.outputs }}"'
+        run: 'echo "Output: ${{ steps.check.outputs.changed }} | ${{ steps.check.outputs.type }} | ${{ steps.check.outputs.commit }} | ${{ steps.check.outputs.version }}"'
 
       - name: Log when changed
         if: steps.check.outputs.changed == 'true'
