@@ -14,6 +14,8 @@ jobs:
       - name: Check NPM package version
         id: check
         uses: EndBug/version-check@v1
+        with:
+          file-name: ./nodejs/package.json
 
       - name: Debug check
         run: 'echo "Output: ${{ steps.check.outputs.changed }} | ${{ steps.check.outputs.type }} | ${{ steps.check.outputs.commit }} | ${{ steps.check.outputs.version }}"'
