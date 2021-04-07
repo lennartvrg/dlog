@@ -17,8 +17,6 @@ jobs:
         with:
           diff-search: true
           file-name: ./nodejs/package.json
-          file-url: https://unpkg.com/dlog-nodejs@latest/package.json
-          static-checking: localIsNew
 
       - name: Debug check
         run: 'echo "Output: ${{ steps.check.outputs.changed }} | ${{ steps.check.outputs.type }} | ${{ steps.check.outputs.commit }} | ${{ steps.check.outputs.version }}"'
