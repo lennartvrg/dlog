@@ -21,24 +21,24 @@ jobs:
           static-checking: localIsNew
 
       - name: Debug check
-        run: 'echo "Output: ${{ steps.check.output.changed }} | ${{ steps.check.output.type }} | ${{ steps.check.output.commit }} | ${{ steps.check.output.version }}"'
+        run: 'echo "Output: ${{ steps.check.outputs.changed }} | ${{ steps.check.outputs.type }} | ${{ steps.check.outputs.commit }} | ${{ steps.check.outputs.version }}"'
 
       - name: Log when changed
-        if: steps.check.output.changed == 'true'
-        run: 'echo "Version change found in commit ${{ steps.check.output.commit }}! New version: ${{ steps.check.output.version }} (${{ steps.check.output.type }})"'
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
 
       - name: Log when unchanged
-        if: steps.check.output.changed == 'false'
+        if: steps.check.outputs.changed == 'false'
         run: 'echo "No version change :/"'
 
       - name: Setting job output
-        run: echo ::set-output name=changed::${{ steps.check.output.changed }}
+        run: echo ::set-output name=changed::${{ steps.check.outputs.changed }}
 
   build:
     runs-on: ${{ matrix.OS }}
     needs:
       - check
-    if: needs.check.output.changed == 'true'
+    if: needs.check.outputs.changed == 'true'
     defaults:
       run:
         working-directory: ./nodejs
