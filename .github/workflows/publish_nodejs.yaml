@@ -10,6 +10,7 @@ jobs:
     defaults:
       run:
         working-directory: ./nodejs
+
     strategy:
       matrix:
         include:
@@ -19,6 +20,8 @@ jobs:
             TARGET: x86_64-pc-windows-msvc
           - os: ubuntu-latest
             TARGET: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            TARGET: aarch64-unknown-linux-gnu
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
