@@ -84,6 +84,10 @@ jobs:
           args: --release --target ${{ matrix.TARGET }}
           use-cross: ${{ matrix.CROSS }}
 
+      - name: Strip symbols for linux binaries
+        if: startsWith(matrix.os,'ubuntu')
+        run: strip ./native/lib/index.node
+
       - name: Get dependencies
         run: npm install
 
