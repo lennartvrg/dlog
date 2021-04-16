@@ -1,4 +1,3 @@
-use native::models::Priority;
 use neon::prelude::*;
 
 mod extractor;
@@ -20,16 +19,9 @@ fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
 }
 
 fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let message = cx.extract()?.value(&mut cx);
-    match cx.context()?.0.log(Priority::Critical, message) {
-        Err(err) => cx.throw_error(err),
-        Ok(_) => Ok(JsUndefined::new(&mut cx)),
-    }
-}
-
-fn error(mut cx: FunctionContext) -> JsResult<JsUndefined> {
-    let message = cx.extract()?.value(&mut cx);
-    match cx.context()?.0.log(Priority::Critical, message) {
+    let level = cx.level()?;
+    let message = cx.message()?.value(&mut cx);
+    match cx.context()?.0.log(level, message) {
         Err(err) => cx.throw_error(err),
         Ok(_) => Ok(JsUndefined::new(&mut cx)),
     }
@@ -40,7 +32,6 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("configure", configure)?;
     cx.export_function("cleanUp", clean_up)?;
     cx.export_function("log", log)?;
-    cx.export_function("error", error)?;
 
     Ok(())
 }

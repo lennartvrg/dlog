@@ -3,7 +3,16 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Priority {
+    Emergency,
+    Alert,
     Critical,
+    Error,
+    Warning,
+    Notice,
+    Informational,
+    Debug,
+    Trace,
+    None,
 }
 
 #[derive(Serialize, Deserialize)]
