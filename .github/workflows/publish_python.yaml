@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.check.outputs.changed }}
+    defaults:
+      run:
+        working-directory: ./python
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -53,6 +56,9 @@ jobs:
           - OS: ubuntu-latest
             TARGET: armv7-unknown-linux-gnueabihf
     steps:
+      - name: Install maturin
+        run: pip install maturin
+
       - name: Setup cargo toolchain
         uses: actions-rs/toolchain@v1
         with:
