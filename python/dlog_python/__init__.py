@@ -10,8 +10,5 @@ class DlogLogger(StreamHandler):
     def emit(self, record):
         self.instance.log(record.levelno, self.format(record))
 
-    def flush(self) -> None:
-        self.instance.clean_up()
-
     def __del__(self):
         self.instance.clean_up()
