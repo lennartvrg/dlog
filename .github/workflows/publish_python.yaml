@@ -44,6 +44,7 @@ jobs:
         working-directory: ./python
     strategy:
       matrix:
+        python-version: [3.8, 3.9]
         include:
           - OS: macos-latest
             TARGET: x86_64-apple-darwin
@@ -53,11 +54,17 @@ jobs:
             TARGET: x86_64-unknown-linux-gnu
           - OS: ubuntu-latest
             TARGET: aarch64-unknown-linux-gnu
-          - OS: ubuntu-latest
-            TARGET: armv7-unknown-linux-gnueabihf
     steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
       - name: Install maturin
-        run: pip install maturin
+        run: python -m pip install --upgrade pip maturin
 
       - name: Setup cargo toolchain
         uses: actions-rs/toolchain@v1
@@ -65,9 +72,6 @@ jobs:
           toolchain: stable
           target: ${{ matrix.TARGET }}
           override: true
-
-      - name: Checkout the repository
-        uses: actions/checkout@v2
 
       - name: Build configuration
         run: echo "Building for ${{ matrix.TARGET }}"
