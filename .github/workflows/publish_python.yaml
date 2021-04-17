@@ -22,8 +22,8 @@ jobs:
       - name: Compare versions
         id: check
         run: |
-          new=$(pypi-version --version | grep -oP '(?<=version )[^ ]*')
-          old=$(awk -F "=" '/version/ {print $2}' pyproject.toml | tr -d '"' | tr -d ' ')
+          old=$(pypi-version --version | grep -oP '(?<=version )[^ ]*')
+          new=$(awk -F "=" '/version/ {print $2}' pyproject.toml | tr -d '"' | tr -d ' ')
           updated='false'; [ $(printf "$new\n$old" | sort -V -r | grep -m1 '') == $new ] && updated='true'
           echo "::set-output name=changed::$updated"
 
