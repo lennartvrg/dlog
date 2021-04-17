@@ -1,0 +1,13 @@
+[project]
+name = "dlog_python"
+version = "0.1.1"
+description = "Python adapter for the dlog loggin platform"
+license = "MIT"
+python = "^3.6"
+homepage = "https://github.com/lennartvrg/dlog"
+repository = "https://github.com/lennartvrg/dlog"
+documentation = "https://github.com/lennartvrg/dlog"
+
+[build-system]
+requires = ["maturin"]
+build-backend = "maturin"

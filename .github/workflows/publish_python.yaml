@@ -1,0 +1,73 @@
+name: Publish Python adapter
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Install pypi-version
+        run: pip install pypi-version
+
+      - name: Compare versions
+        id: check
+        run: |
+          new=$(pypi-version --version | grep -oP '(?<=version )[^ ]*')
+          old=$(awk -F "=" '/version/ {print $2}' pyproject.toml | tr -d '"' | tr -d ' ')
+          updated='false'; [ $(printf "$new\n$old" | sort -V -r | grep -m1 '') == $new ] && updated='true'
+          echo "::set-output name=changed::$updated"
+
+      - name: Log when changed
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found in commit ${{ steps.check.outputs.commit }}!"'
+
+      - name: Log when unchanged
+        if: steps.check.outputs.changed == 'false'
+        run: 'echo "No version change :/"'
+
+  publish:
+    runs-on: ${{ matrix.OS }}
+    needs: check
+    if: ${{ needs.check.outputs.changed == 'true' }}
+    defaults:
+      run:
+        working-directory: ./python
+    strategy:
+      matrix:
+        include:
+          - OS: macos-latest
+            TARGET: x86_64-apple-darwin
+          - OS: windows-latest
+            TARGET: x86_64-pc-windows-msvc
+          - OS: ubuntu-latest
+            TARGET: x86_64-unknown-linux-gnu
+          - OS: ubuntu-latest
+            TARGET: aarch64-unknown-linux-gnu
+          - OS: ubuntu-latest
+            TARGET: armv7-unknown-linux-gnueabihf
+    steps:
+      - name: Setup cargo toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.TARGET }}
+          override: true
+
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Build configuration
+        run: echo "Building for ${{ matrix.TARGET }}"
+
+      - name: Publish
+        env:
+          MATURIN_USER: ${{ secrets.PYPI_USER }}
+          MATURIN_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: maturin publish --target ${{ matrix.TARGET }} --no-sdist --username $MATURIN_USER
