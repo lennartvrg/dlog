@@ -10,28 +10,34 @@ use crate::models::{Log, Priority};
 
 const QUEUE_BUFFER: usize = 1_000;
 
-const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_secs(1);
+const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_millis(250);
 
 #[derive(Debug)]
 pub struct Logger {
-    sender: flume::Sender<Log>,
+    log_tx: flume::Sender<Log>,
     flag: Arc<AtomicBool>,
     handle: RwLock<Option<JoinHandle<()>>>,
 }
 
 impl Logger {
     pub fn new(api_key: String) -> Self {
-        let (sender, receiver) = flume::bounded::<Log>(QUEUE_BUFFER);
+        let (log_tx, log_rx) = flume::bounded::<Log>(QUEUE_BUFFER);
 
         let flag = Arc::new(AtomicBool::new(false));
         let thread_flag = flag.clone();
 
+        let (thread_tx, thread_rx) = flume::bounded::<bool>(1);
         let handle = std::thread::spawn(move || {
             let client = HttpIngestor::new(api_key);
             let mut queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
 
+
+            if let Err(err) = thread_tx.send(true) {
+                println!("[dlog] Failed to send ingest thread start signal: {}", err);
+            }
+
             while !thread_flag.load(Ordering::Relaxed) {
-                let flush = match receiver.recv_timeout(MIN_FLUSH_INTERVAL) {
+                let flush = match log_rx.recv_timeout(MIN_FLUSH_INTERVAL) {
                     Err(flume::RecvTimeoutError::Disconnected) => break,
                     Err(flume::RecvTimeoutError::Timeout) => true,
                     Ok(log) => {
@@ -49,15 +55,19 @@ impl Logger {
             client.log(queue);
         });
 
+        if let Err(err) = thread_rx.recv() {
+            println!("[dlog] Failed to receive ingest thread start signal: {}", err);
+        }
+
         Self {
-            sender,
+            log_tx,
             flag,
             handle: RwLock::new(Some(handle)),
         }
     }
 
     pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {
-        match self.sender.send(Log::new(priority, message)) {
+        match self.log_tx.send(Log::new(priority, message)) {
             Err(err) => Err(format!("Failed to move log to sender: {}", err)),
             Ok(_) => Ok(()),
         }
@@ -68,7 +78,7 @@ impl Logger {
 
         let mut write = match self.handle.write() {
             Err(err) => {
-                println!("Failed to get write lock during cleanup: {}", err);
+                println!("[dlog] Failed to get write lock during cleanup: {}", err);
                 return
             },
             Ok(val) => val,
@@ -80,7 +90,7 @@ impl Logger {
         };
 
         if let Err(err) = handle.join() {
-            println!("Failed to join queue thread: {:?}", err)
+            println!("[dlog] Failed to join ingest thread: {:?}", err)
         }
     }
 }

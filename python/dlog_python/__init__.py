@@ -1,11 +1,11 @@
-from logging import StreamHandler
-from .dlog_python import PythonLogger
+from logging import StreamHandler as _StreamHandler
+from .dlog_python import PythonLogger as _PythonLogger
 
 
-class DlogLogger(StreamHandler):
+class DlogLogger(_StreamHandler):
     def __init__(self, api_key):
-        StreamHandler.__init__(self)
-        self.instance = PythonLogger(api_key)
+        _StreamHandler.__init__(self)
+        self.instance = _PythonLogger(api_key)
 
     def emit(self, record):
         self.instance.log(record.levelno, self.format(record))

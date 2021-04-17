@@ -1,6 +1,6 @@
 {
   "name": "dlog-nodejs",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Pure Node.JS bindings for dlog",
   "main": "lib/index.js",
   "author": "lennartvrg",

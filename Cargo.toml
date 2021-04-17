@@ -1,7 +1,10 @@
 [workspace]
-
 members = [
     "native",
     "python",
     "nodejs/native"
+]
+
+default-members = [
+    "native"
 ]
