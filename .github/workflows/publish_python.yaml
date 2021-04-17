@@ -85,4 +85,4 @@ jobs:
       - name: Publish
         env:
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
-        run: maturin publish --target ${{ matrix.TARGET }} --no-sdist --username ${{ secrets.MATURIN_USER }}
+        run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
