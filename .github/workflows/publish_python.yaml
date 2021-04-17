@@ -44,7 +44,16 @@ jobs:
         working-directory: ./python
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        TARGET: [
+            x86_64-apple-darwin,
+            x86_64-pc-windows-msvc,
+            x86_64-unknown-linux-gnu,
+            aarch64-unknown-linux-gnu
+        ]
+        python-version: [
+            3.8,
+            3.9
+        ]
         include:
           - OS: macos-latest
             TARGET: x86_64-apple-darwin
@@ -78,6 +87,5 @@ jobs:
 
       - name: Publish
         env:
-          MATURIN_USER: ${{ secrets.PYPI_USER }}
           MATURIN_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: maturin publish --target ${{ matrix.TARGET }} --no-sdist --username $MATURIN_USER
+        run: maturin publish --target ${{ matrix.TARGET }} --no-sdist --username ${{ secrets.PYPI_USER }}
