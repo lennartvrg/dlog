@@ -15,7 +15,10 @@ fn clean_up(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 
 fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
     let api_key = cx.argument::<JsString>(0)?.value(&mut cx);
-    Ok(cx.boxed(Logger(native::Logger::new(api_key))))
+    match native::Logger::new(api_key) {
+        Err(err) => cx.throw_error(err),
+        Ok(val) => Ok(cx.boxed(Logger(val))),
+    }
 }
 
 fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {

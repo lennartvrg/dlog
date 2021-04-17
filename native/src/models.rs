@@ -38,3 +38,11 @@ impl Log {
 pub struct LogRequest {
     pub logs: Vec<Log>,
 }
+
+impl LogRequest {
+    pub fn new(logs: Vec<Log>) -> Self {
+        Self {
+            logs,
+        }
+    }
+}

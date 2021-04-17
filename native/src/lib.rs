@@ -10,7 +10,8 @@ use crate::models::{Log, Priority};
 
 const QUEUE_BUFFER: usize = 1_000;
 
-const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_millis(250);
+const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_secs(1);
+const MIN_LOOP_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
 
 #[derive(Debug)]
 pub struct Logger {
@@ -20,7 +21,7 @@ pub struct Logger {
 }
 
 impl Logger {
-    pub fn new(api_key: String) -> Self {
+    pub fn new(api_key: String) -> Result<Self, String> {
         let (log_tx, log_rx) = flume::bounded::<Log>(QUEUE_BUFFER);
 
         let flag = Arc::new(AtomicBool::new(false));
@@ -29,41 +30,50 @@ impl Logger {
         let (thread_tx, thread_rx) = flume::bounded::<bool>(1);
         let handle = std::thread::spawn(move || {
             let client = HttpIngestor::new(api_key);
-            let mut queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
 
+            let has_api_key = client.log(vec![
+                Log::new(Priority::Trace, "Initialized dlog".to_owned())
+            ]);
 
-            if let Err(err) = thread_tx.send(true) {
-                println!("[dlog] Failed to send ingest thread start signal: {}", err);
+            if let Err(err) = thread_tx.send(has_api_key) {
+                println!("[dlog] Failed to signal API_KEY check: {}", err);
             }
 
-            while !thread_flag.load(Ordering::Relaxed) {
-                let flush = match log_rx.recv_timeout(MIN_FLUSH_INTERVAL) {
-                    Err(flume::RecvTimeoutError::Disconnected) => break,
-                    Err(flume::RecvTimeoutError::Timeout) => true,
-                    Ok(log) => {
-                        queue.push(log);
-                        queue.len() >= QUEUE_BUFFER
+            if has_api_key {
+                let mut queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
+
+                let mut last_flush = std::time::Instant::now();
+                while !thread_flag.load(Ordering::Relaxed) {
+                    match log_rx.recv_timeout(MIN_LOOP_INTERVAL) {
+                        Err(flume::RecvTimeoutError::Disconnected) => break,
+                        Ok(log) => queue.push(log),
+                        _ => (),
+                    };
+    
+                    if queue.len() >= QUEUE_BUFFER || last_flush.elapsed() >= MIN_FLUSH_INTERVAL {
+                        if queue.len() >= 1 {
+                            client.log(queue);
+                            queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
+                        }
+                        last_flush = std::time::Instant::now();
                     }
-                };
-
-                if flush {
-                    client.log(queue);
-                    queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
                 }
+    
+                client.log(queue);
             }
-
-            client.log(queue);
         });
 
-        if let Err(err) = thread_rx.recv() {
-            println!("[dlog] Failed to receive ingest thread start signal: {}", err);
-        }
+        match thread_rx.recv() {
+            Err(err) => println!("[dlog::configure] Failed to receive API_KEY check signal: {}", err),
+            Ok(false) => return Err("[dlog::configure] Please configure dlog with a valid API_KEY!".to_owned()),
+            _ => (),
+        };
 
-        Self {
+        Ok(Self {
             log_tx,
             flag,
             handle: RwLock::new(Some(handle)),
-        }
+        })
     }
 
     pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {

@@ -10,9 +10,12 @@ struct PythonLogger {
 #[pymethods]
 impl PythonLogger {
     #[new]
-    fn __new__(api_key: String) -> Self {
-        Self {
-            native: native::Logger::new(api_key),
+    fn __new__(api_key: String) -> PyResult<Self> {
+        match native::Logger::new(api_key) {
+            Err(err) => Err(PyValueError::new_err(err)),
+            Ok(val) => Ok(Self {
+                native: val,
+            })
         }
     }
 
