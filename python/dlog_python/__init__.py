@@ -12,3 +12,6 @@ class DlogLogger(StreamHandler):
 
     def flush(self) -> None:
         self.instance.clean_up()
+
+    def __del__(self):
+        self.instance.clean_up()

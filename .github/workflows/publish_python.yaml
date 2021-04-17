@@ -1,6 +1,6 @@
 name: Publish Python adapter
 on:
-  pull_request:
+  push:
     branches:
       - master
 
