@@ -2,5 +2,6 @@
 
 members = [
     "native",
+    "python",
     "nodejs/native"
 ]

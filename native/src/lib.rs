@@ -65,6 +65,22 @@ impl Logger {
 
     pub fn clean_up(&self) {
         self.flag.store(true, Ordering::Relaxed);
-        self.handle.write().unwrap().take().unwrap().join().unwrap();
+
+        let mut write = match self.handle.write() {
+            Err(err) => {
+                println!("Failed to get write lock during cleanup: {}", err);
+                return
+            },
+            Ok(val) => val,
+        };
+
+        let handle = match write.take() {
+            None => return,
+            Some(val) => val,
+        };
+
+        if let Err(err) = handle.join() {
+            println!("Failed to join queue thread: {:?}", err)
+        }
     }
 }
