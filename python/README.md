@@ -42,7 +42,6 @@ If you desperatly need a version for another architecture / python version pleas
 [📝 GitHub](https://github.com/lennartvrg/dlog/issues). Below you can find a matrix of our supported python versions and
 architectures.
 
-
 | Python version 	| Linux x64 	| MacOS x64 	| Windows x64 	|
 |:----------------:	|:-----------:	|:-----------:	|:-------------:	|
 | 3.8            	|     ✔️     	|     ✔️     	|      ✔️      	|

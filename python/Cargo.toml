@@ -1,9 +1,14 @@
 [package]
 name = "python"
-version = "0.1.7"
+version = "0.1.9"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
+
 readme = "README.md"
+description = "Python adapter for the dlog logging platform"
+homepage = "https://github.com/lennartvrg/dlog/python"
+repository = "https://github.com/lennartvrg/dlog/python"
+documentation = "https://github.com/lennartvrg/dlog/python"
 
 [lib]
 name = "dlog_python"
@@ -17,3 +22,13 @@ native = { path = "../native"}
 [package.metadata.maturin]
 name = "dlog_python"
 requires-python = ">=3.8"
+description-content-type = "text/markdown"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: System :: Logging",
+    "Topic :: System :: Networking :: Monitoring"
+]
