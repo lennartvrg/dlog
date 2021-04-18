@@ -1,8 +1,9 @@
 [package]
 name = "python"
-version = "0.1.6"
+version = "0.1.7"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
+readme = "README.md"
 
 [lib]
 name = "dlog_python"

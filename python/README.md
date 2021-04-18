@@ -2,14 +2,14 @@
 
 _________________
 
-<center>
+<div align="center">
 
 [🌐 - Web app](https://app.dlog.cloud)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [🐱‍💻 - Repository](https://github.com/lennartvrg/dlog)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [📝 - Issues](https://github.com/lennartvrg/dlog/issues)
-</center>
+</div>
 
 
 **dlog** is a logging platform designed for microservice architectures. It takes away the hassle of setting up your own
@@ -80,11 +80,11 @@ Once you click on a service, you will see a list of API_KEYs. It is possible for
 in case you want to differentiate between different deployment environments such as `dev` or `prod`. To create a new
 API_KEY simply click to plus icon on the right side, pick a name and hit *Create*.
 
-<center>
+<div align="center">
 
 ⚠️ **The API_KEY is only visible during the initial creation, so please take note and store it somewhere safe** ⚠️
 
-</center>
+</div>
 
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
