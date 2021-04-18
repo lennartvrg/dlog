@@ -26,6 +26,13 @@ impl PythonLogger {
         }
     }
 
+    fn flush(&self) -> PyResult<()> {
+        match self.native.flush() {
+            Err(err) => Err(PyValueError::new_err(err)),
+            Ok(_) => Ok(())
+        }
+    }
+
     fn clean_up(&self) -> PyResult<()> {
         Ok(self.native.clean_up())
     }

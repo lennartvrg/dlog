@@ -1,9 +1,10 @@
 [project]
 name = "dlog_python"
 version = "0.1.5"
-description = "Python adapter for the dlog loggin platform"
+description = "Python adapter for the dlog logging platform"
 license = "MIT"
 python = "^3.8"
+readme = "README.md"
 homepage = "https://github.com/lennartvrg/dlog"
 repository = "https://github.com/lennartvrg/dlog"
 documentation = "https://github.com/lennartvrg/dlog"

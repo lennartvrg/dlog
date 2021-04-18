@@ -70,7 +70,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install maturin
-        run: python -m pip install --upgrade pip maturin
+        run: python -m pip install --upgrade pip maturin setuptools
 
       - name: Setup cargo toolchain
         uses: actions-rs/toolchain@v1
