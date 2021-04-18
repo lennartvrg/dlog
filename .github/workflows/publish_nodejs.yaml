@@ -81,7 +81,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --target ${{ matrix.TARGET }}
+          args: -p dlog-nodejs --release --target ${{ matrix.TARGET }}
           use-cross: ${{ matrix.CROSS }}
 
       - name: Get dependencies

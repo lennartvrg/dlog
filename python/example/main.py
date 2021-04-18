@@ -1,10 +1,10 @@
-import logging
-import time
-from dlog_python import DlogLogger
+import os
+from dlog_python import with_dlog
 
 
-logger = logging.getLogger('main')
-logger.setLevel(logging.DEBUG)
-logger.addHandler(DlogLogger("997a1c6f-4fff-4a7e-b399-74ac397a4fec"))
+@with_dlog(os.environ['DLOG_API_KEY'])
+def example(logger):
+    logger.warning("Test")
 
-logger.info("Test")
+
+example()
