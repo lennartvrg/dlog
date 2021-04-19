@@ -1,6 +1,6 @@
 [package]
 name = "python"
-version = "0.1.9"
+version = "0.2.0"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
 
@@ -21,14 +21,15 @@ native = { path = "../native"}
 
 [package.metadata.maturin]
 name = "dlog_python"
-requires-python = ">=3.8"
+requires-python = ">=3.6"
 description-content-type = "text/markdown"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3 :: Only",
-    "Topic :: System :: Logging",
-    "Topic :: System :: Networking :: Monitoring"
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Topic :: System :: Logging"
 ]
