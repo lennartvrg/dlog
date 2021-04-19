@@ -44,6 +44,8 @@ architectures.
 
 | Python version 	| Linux x64 	| MacOS x64 	| Windows x64 	|
 |:----------------:	|:-----------:	|:-----------:	|:-------------:	|
+| 3.6            	|     ✔️     	|     ✔️     	|      ✔️      	|
+| 3.7            	|     ✔️     	|     ✔️     	|      ✔️      	|
 | 3.8            	|     ✔️     	|     ✔️     	|      ✔️      	|
 | 3.9            	|     ✔️     	|     ✔️     	|      ✔️      	|
 
@@ -115,7 +117,7 @@ from dlog_python import DlogLogger
 logger = logging.getLogger('main')
 logger.addHandler(DlogLogger(os.environ['DLOG_API_KEY']))
 
-logger.info("Hello World!")
+logger.warning("Hello World!")
 ```
 
 
