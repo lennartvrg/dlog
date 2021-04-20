@@ -105,9 +105,9 @@ For most use cases you can simply use dlog with the python `logging` module. For
 to get started. The dlog logging handler is threadsafe and can be passed around inside your program as needed.
 
 ⚠️**NOTE:** This approach is not recommended for environments such as AWS Lambda. This is due to fact that Lambda
-suspends the execution container once the request is finished. As this quest uses a background thread for ingestion logs,
+suspends the execution container once the request is finished. As this module uses a background thread for ingestion logs,
 that thread can no longer operate. To use dlog in AWS Lambda please look to the [Serverless functions](#serverless-functions)
-section.
+section and use the `@with_dlog()` decorator.
 
 ```python
 import os
