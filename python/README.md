@@ -86,9 +86,9 @@ API_KEY simply click to plus icon on the right side, pick a name and hit *Create
 
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
-**6. Install and configure dlog**
+**6. Install and configure dlog_python**
 
-You can install the module using `pip install dlog` and configure it either for regular or serverless environments.
+You can install the module using `pip install dlog_python` and configure it either for regular or serverless environments.
 To see how this is done, please consult the [Basic Example](#basic) or [AWS Lambda Example](#serverless-functions).
 
 
@@ -109,7 +109,7 @@ section and use the `@with_dlog()` decorator.
 ```python
 import os
 import logging
-from dlog import DlogLogger
+from dlog_python import DlogLogger
 
 logger = logging.getLogger('main')
 logger.addHandler(DlogLogger(os.environ['DLOG_API_KEY']))
@@ -129,7 +129,7 @@ an example serverless handler.
 ```python
 import os
 import json
-from dlog import with_dlog
+from dlog_python import with_dlog
 
 
 @with_dlog(os.environ['DLOG_API_KEY'])

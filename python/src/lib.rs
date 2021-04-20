@@ -50,7 +50,7 @@ fn convert_priority(level: i32) -> Priority {
 }
 
 #[pymodule]
-fn dlog(_py: Python, m: &PyModule) -> PyResult<()> {
+fn dlog_python(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PythonLogger>()?;
 
     Ok(())
