@@ -1,5 +1,5 @@
 import os
-from dlog import with_dlog
+from dlog_python import with_dlog
 
 
 @with_dlog(os.environ['DLOG_API_KEY'])
