@@ -30,11 +30,19 @@ fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     }
 }
 
+fn flush(mut cx: FunctionContext) -> JsResult<JsUndefined> {
+    match cx.context()?.0.flush() {
+        Err(err) => cx.throw_error(err),
+        Ok(_) => Ok(JsUndefined::new(&mut cx)),
+    }
+}
+
 #[neon::main]
 fn main(mut cx: ModuleContext) -> NeonResult<()> {
     cx.export_function("configure", configure)?;
     cx.export_function("cleanUp", clean_up)?;
     cx.export_function("log", log)?;
+    cx.export_function("flush", flush)?;
 
     Ok(())
 }

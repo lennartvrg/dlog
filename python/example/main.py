@@ -1,10 +1,10 @@
 import os
-from dlog_python import with_dlog
+from dlog import with_dlog
 
 
 @with_dlog(os.environ['DLOG_API_KEY'])
 def example(logger):
-    logger.warning("Test")
+    logger.warning("Johannes")
 
 
 example()

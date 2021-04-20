@@ -27,7 +27,8 @@ function apply(original, level) {
 }
 
 module.exports.configure = function (api_key) {
-    if (instance) throw "[dlog] configure(<API_KEY>) may only be called once."
+    if (instance) throw "[dlog] configure(<API_KEY>) may only be called once"
+    else if (typeof api_key !== 'string') throw "[dlog] Please provide a valid API_KEY"
     else instance = addon.configure(api_key)
 
     process.on('exit', addon.cleanUp.bind(null, instance));
@@ -46,4 +47,13 @@ module.exports.configure = function (api_key) {
     console.info = apply(info, INFO);
     console.log = apply(log, INFO);
     console.debug = apply(debug, DEBUG);
+}
+
+module.exports.with_dlog = function (API_KEY, handler) {
+    this.configure(API_KEY) 
+    return async function(...args) {
+        const res = await Promise.resolve(handler(...args))
+        addon.flush(instance)
+        return res
+    }
 }

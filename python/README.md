@@ -13,12 +13,9 @@ _________________
 
 
 **dlog** is a logging platform designed for microservice architectures. It takes away the hassle of setting up your own
-logging infrastructure by providing **drop-in** adapter for several programming languages. The **dlog** logging platform
-can ingest thousands of logs every second and provides a fast and easy to use interface for developers to view their logs.
-
-In the near future a **full text search** capable interface will be developed which can be used to analyse huge amounts
-of log records. Additionally, it is planned to add **alerts** to the platform so that you can get informed when an error
-occurred during operation.
+logging infrastructure by providing **drop-in** adapter for several programming languages. It can ingest thousands of
+logs every second and provides a fast and easy to use interface for developers to analyse their logs. Logs
+can be observed in real-time or searched via a **full text search** capable query interface.
 
 
 ## Features
@@ -89,9 +86,9 @@ API_KEY simply click to plus icon on the right side, pick a name and hit *Create
 
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
-**6. Install and configure dlog_python**
+**6. Install and configure dlog**
 
-You can install the module using `pip install dlog_python` and configure it either for regular or serverless environments.
+You can install the module using `pip install dlog` and configure it either for regular or serverless environments.
 To see how this is done, please consult the [Basic Example](#basic) or [AWS Lambda Example](#serverless-functions).
 
 
@@ -112,7 +109,7 @@ section and use the `@with_dlog()` decorator.
 ```python
 import os
 import logging
-from dlog_python import DlogLogger
+from dlog import DlogLogger
 
 logger = logging.getLogger('main')
 logger.addHandler(DlogLogger(os.environ['DLOG_API_KEY']))
@@ -132,7 +129,7 @@ an example serverless handler.
 ```python
 import os
 import json
-from dlog_python import with_dlog
+from dlog import with_dlog
 
 
 @with_dlog(os.environ['DLOG_API_KEY'])
