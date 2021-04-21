@@ -77,12 +77,6 @@ Once you click on a service, you will see a list of API_KEYs. It is possible for
 in case you want to differentiate between different deployment environments such as `dev` or `prod`. To create a new
 API_KEY simply click to plus icon on the right side, pick a name and hit *Create*.
 
-<div align="center">
-
-⚠️ **The API_KEY is only visible during the initial creation, so please take note and store it somewhere safe** ⚠️
-
-</div>
-
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
 **6. Install and configure dlog_nodejs**
