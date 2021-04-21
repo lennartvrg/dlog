@@ -16,9 +16,6 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      - name: Install pypi-version
-        run: pip install pypi-version
-
       - name: Compare versions
         id: check
         run: |
