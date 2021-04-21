@@ -1,11 +1,11 @@
 [workspace]
 members = [
-    "native",
-    "python",
-    "nodejs/native",
-    "dlog-rs"
+    "dlog_core",
+    "dlog_py",
+    "dlog_rs",
+    "dlog_nodejs/native",
 ]
 
 default-members = [
-    "native"
+    "dlog_core"
 ]

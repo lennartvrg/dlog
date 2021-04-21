@@ -1,6 +1,7 @@
 use pyo3::prelude::*;
-use native::models::Priority;
 use pyo3::exceptions::PyValueError;
+
+use dlog_core::models::Priority;
 
 #[pyclass]
 struct PythonLogger {
@@ -50,7 +51,7 @@ fn convert_priority(level: i32) -> Priority {
 }
 
 #[pymodule]
-fn dlog_python(_py: Python, m: &PyModule) -> PyResult<()> {
+fn dlog_py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PythonLogger>()?;
 
     Ok(())

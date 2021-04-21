@@ -1,5 +1,5 @@
 [package]
-name = "dlog-rs"
+name = "dlog_rs"
 version = "0.3.0"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
@@ -16,4 +16,4 @@ path = "src/lib.rs"
 [dependencies]
 log = { version = "0.4.14", features = ["std"] }
 
-native = { version = "0.3.0", path = "../native" }
+dlog_core = { path = "../dlog_core" }

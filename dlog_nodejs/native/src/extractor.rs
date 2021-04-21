@@ -2,7 +2,7 @@ use neon::context::FunctionContext;
 use neon::result::{JsResult, Throw};
 use neon::types::{JsArray, JsBox, JsString, JsNumber};
 
-use native::models::Priority;
+use dlog_core::models::Priority;
 
 use crate::Logger;
 

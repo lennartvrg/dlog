@@ -4,7 +4,7 @@ mod extractor;
 
 use crate::extractor::Extractor;
 
-pub struct Logger(native::Logger);
+pub struct Logger (dlog_core::Logger);
 
 impl Finalize for Logger {}
 
@@ -15,7 +15,7 @@ fn clean_up(mut cx: FunctionContext) -> JsResult<JsUndefined> {
 
 fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
     let api_key = cx.argument::<JsString>(0)?.value(&mut cx);
-    match native::Logger::new(api_key) {
+    match dlog_core::Logger::new(api_key) {
         Err(err) => cx.throw_error(err),
         Ok(val) => Ok(cx.boxed(Logger(val))),
     }

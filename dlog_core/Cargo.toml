@@ -1,10 +1,11 @@
 [package]
-name = "native"
+name = "dlog_core"
 version = "0.3.0"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib"]
 
 [dependencies]
 flume = { version = "0.10.2", default-features = false }

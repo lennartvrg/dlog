@@ -1,15 +1,14 @@
 use log::{Level, Metadata, Record};
-
-use native::models::Priority;
+use dlog_core::models::Priority;
 
 pub struct DlogLogger {
-    native: native::Logger,
+    core: dlog_core::Logger,
 }
 
 impl DlogLogger {
-    pub fn new(native: native::Logger) -> Self {
+    pub fn new(core: dlog_core::Logger) -> Self {
         Self {
-            native,
+            core,
         }
     }
 }
@@ -21,7 +20,7 @@ impl log::Log for DlogLogger {
 
     fn log(&self, record: &Record) {
         if let Err(err) = self
-            .native
+            .core
             .log(convert_level(record.level()), record.args().to_string())
         {
             eprintln!("[dlog] Error during log: {}", err)
@@ -29,7 +28,7 @@ impl log::Log for DlogLogger {
     }
 
     fn flush(&self) {
-        if let Err(err) = self.native.flush() {
+        if let Err(err) = self.core.flush() {
             eprintln!("[dlog] Error during flush: {}", err)
         }
     }
