@@ -16,4 +16,4 @@ path = "src/lib.rs"
 [dependencies]
 log = { version = "0.4.14", features = ["std"] }
 
-dlog_core = { path = "../dlog_core" }
+dlog_core = { version = "0.3.0", path = "../dlog_core" }

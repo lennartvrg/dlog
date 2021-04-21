@@ -14,7 +14,7 @@
     "neon-cli": "^0.8.0"
   },
   "scripts": {
-    "postinstall": "node-pre-gyp install --fallback-to-build=false"
+    "install": "node-pre-gyp install --fallback-to-build=false || neon build --release"
   },
   "homepage": "https://github.com/lennartvrg/dlog",
   "repository": {
