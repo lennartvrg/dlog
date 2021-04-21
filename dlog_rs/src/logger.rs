@@ -1,4 +1,5 @@
 use log::{Level, Metadata, Record};
+
 use dlog_core::models::Priority;
 
 pub struct DlogLogger {

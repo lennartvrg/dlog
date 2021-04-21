@@ -85,9 +85,9 @@ API_KEY simply click to plus icon on the right side, pick a name and hit *Create
 
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
-**6. Install and configure dlog-nodejs**
+**6. Install and configure dlog_nodejs**
 
-You can install the package using `npm install dlog-nodejs` or `yarn add dlog-nodejs` and configure it either for regular or serverless environments.
+You can install the package using `npm install dlog_nodejs` or `yarn add dlog_nodejs` and configure it either for regular or serverless environments.
 To see how this is done, please consult the [Basic Example](#basic) or [AWS Lambda Example](#serverless-functions).
 
 
@@ -108,7 +108,7 @@ section and use the `with_dlog()` higher order function.
 #### JavaScript
 
 ```javascript
-const dlog = require('dlog-nodejs')
+const dlog = require('dlog_nodejs')
 
 dlog.configure(process.env.DLOG_API_KEY)
 
@@ -123,7 +123,7 @@ ensures that the logs are being flushed to dlog at the end of the serverless fun
 
 
 ```javascript
-const dlog = require('dlog-nodejs')
+const dlog = require('dlog_nodejs')
 
 const handler = function (event) {
   console.log("AWS Lambda payload: " + JSON.stringify(event, null, 2))

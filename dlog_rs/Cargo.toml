@@ -6,7 +6,7 @@ edition = "2018"
 license = "MIT"
 description = "Rust adapter for the dlog logging platform"
 homepage = "https://app.dlog.cloud"
-repository = "https://github.com/lennartvrg/dlog/dlog-rs"
+repository = "https://github.com/lennartvrg/dlog"
 readme = "README.md"
 
 [lib]
