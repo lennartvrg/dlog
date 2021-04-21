@@ -24,6 +24,7 @@ jobs:
 
   dlog_rs:
     runs-on: ubuntu-latest
+    needs: dlog_core
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2

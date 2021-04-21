@@ -19,7 +19,7 @@ jobs:
         with:
           diff-search: true
           file-name: ./dlog_nodejs/package.json
-          file-url: https://unpkg.com/dlog-nodejs@latest/package.json
+          file-url: https://unpkg.com/dlog_nodejs@latest/package.json
           static-checking: localIsNew
 
       - name: Log when changed
