@@ -24,7 +24,7 @@ jobs:
         run: |
           old=$(curl -s 'https://pypi.org/pypi/dlog_py/json' | jq -r '.info.version')
           new=$(awk -F'[ ="]+' '$1 == "version" { print $2 }' Cargo.toml)
-          updated='false'; [ $(printf "$new\n$old" | sort -V -r | grep -m1 '') == $new ] && updated='true'
+          updated='false'; [ $(printf "$new\n$old" | sort -V -r | grep -m1 '') != $old ] && updated='true'
           echo "::set-output name=changed::$updated"
 
       - name: Log when changed
