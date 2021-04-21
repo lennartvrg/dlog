@@ -36,7 +36,7 @@
   ],
   "binary": {
     "module_name": "index",
-    "host": "https://dlog_nodejs.s3.eu-central-1.amazonaws.com",
+    "host": "https://dlog-native.s3.eu-central-1.amazonaws.com",
     "remote_path": "{version}",
     "package_name": "native-{platform}-{arch}.tar.gz",
     "module_path": "./native/lib",
