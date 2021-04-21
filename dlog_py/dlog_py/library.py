@@ -1,5 +1,5 @@
 import logging
-from .dlog_python import PythonLogger as _PythonLogger
+from .dlog_py import PythonLogger as _PythonLogger
 
 
 class DlogLogger(logging.StreamHandler):

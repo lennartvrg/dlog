@@ -1,0 +1,19 @@
+[package]
+name = "dlog_rs"
+version = "0.3.0"
+authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
+edition = "2018"
+license = "MIT"
+description = "Rust adapter for the dlog logging platform"
+homepage = "https://app.dlog.cloud"
+repository = "https://github.com/lennartvrg/dlog"
+readme = "README.md"
+
+[lib]
+name = "dlog_rs"
+path = "src/lib.rs"
+
+[dependencies]
+log = { version = "0.4.14", features = ["std"] }
+
+dlog_core = { version = "0.3.0", path = "../dlog_core" }

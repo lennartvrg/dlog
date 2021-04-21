@@ -1,5 +1,5 @@
 [package]
-name = "dlog-nodejs"
+name = "dlog_nodejs"
 version = "0.3.0"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 license = "MIT"
@@ -8,7 +8,7 @@ edition = "2018"
 exclude = ["artifacts.json", "index.node"]
 
 [lib]
-name = "dlog"
+name = "dlog_nodejs"
 crate-type = ["cdylib"]
 
 [build-dependencies]
@@ -20,4 +20,4 @@ serde = { version = "1.0.125", default-features = false }
 once_cell = { version = "1.7.2", default-features = false }
 serde_json = { version = "1.0.64", default-features = false }
 
-native = { path = "../../native" }
+dlog_core = { version = "0.3.0", path = "../../dlog_core" }

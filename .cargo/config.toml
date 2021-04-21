@@ -15,3 +15,6 @@ rustflags = [
     "-C",
     "link-arg=-s",
 ]
+
+[build]
+target-dir = "native/target"

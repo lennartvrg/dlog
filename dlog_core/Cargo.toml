@@ -1,10 +1,13 @@
 [package]
-name = "native"
+name = "dlog_core"
 version = "0.3.0"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+description = "Core library for the dlog logging platform"
+homepage = "https://app.dlog.cloud"
+repository = "https://github.com/lennartvrg/dlog"
+readme = "README.md"
 
 [dependencies]
 flume = { version = "0.10.2", default-features = false }

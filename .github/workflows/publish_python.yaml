@@ -11,7 +11,7 @@ jobs:
       changed: ${{ steps.check.outputs.changed }}
     defaults:
       run:
-        working-directory: ./python
+        working-directory: ./dlog_py
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
     if: ${{ needs.check.outputs.changed == 'true' }}
     defaults:
       run:
-        working-directory: ./python
+        working-directory: ./dlog_py
     strategy:
       matrix:
         TARGET: [

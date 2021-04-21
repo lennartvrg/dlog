@@ -78,17 +78,12 @@ Once you click on a service, you will see a list of API_KEYs. It is possible for
 in case you want to differentiate between different deployment environments such as `dev` or `prod`. To create a new
 API_KEY simply click to plus icon on the right side, pick a name and hit *Create*.
 
-<div align="center">
-
-⚠️ **The API_KEY is only visible during the initial creation, so please take note and store it somewhere safe** ⚠️
-
-</div>
 
 With the API_KEY generated, you are ready to install the module and configure dlog.
 
-**6. Install and configure dlog_python**
+**6. Install and configure dlog_py**
 
-You can install the module using `pip install dlog_python` and configure it either for regular or serverless environments.
+You can install the module using `pip install dlog_py` and configure it either for regular or serverless environments.
 To see how this is done, please consult the [Basic Example](#basic) or [AWS Lambda Example](#serverless-functions).
 
 
@@ -109,7 +104,7 @@ section and use the `@with_dlog()` decorator.
 ```python
 import os
 import logging
-from dlog_python import DlogLogger
+from dlog_py import DlogLogger
 
 logger = logging.getLogger('main')
 logger.addHandler(DlogLogger(os.environ['DLOG_API_KEY']))
@@ -129,7 +124,7 @@ an example serverless handler.
 ```python
 import os
 import json
-from dlog_python import with_dlog
+from dlog_py import with_dlog
 
 
 @with_dlog(os.environ['DLOG_API_KEY'])

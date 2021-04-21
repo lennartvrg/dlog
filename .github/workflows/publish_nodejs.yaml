@@ -18,7 +18,7 @@ jobs:
         uses: EndBug/version-check@v2.0.1
         with:
           diff-search: true
-          file-name: ./nodejs/package.json
+          file-name: ./dlog_nodejs/package.json
           file-url: https://unpkg.com/dlog-nodejs@latest/package.json
           static-checking: localIsNew
 
@@ -36,7 +36,7 @@ jobs:
     if: ${{ needs.check.outputs.changed == 'true' }}
     defaults:
       run:
-        working-directory: ./nodejs
+        working-directory: ./dlog_nodejs
     strategy:
       matrix:
         include:
@@ -81,7 +81,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: -p dlog-nodejs --release --target ${{ matrix.TARGET }}
+          args: -p dlog_nodejs --release --target ${{ matrix.TARGET }}
           use-cross: ${{ matrix.CROSS }}
 
       - name: Get dependencies
@@ -101,7 +101,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: ./nodejs
+        working-directory: ./dlog_nodejs
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2

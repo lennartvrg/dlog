@@ -73,7 +73,7 @@ impl Logger {
 
                     if flush {
                         if let Err(err) = thread_tx.send(Signal::Flush) {
-                            println!("[dlog] Failed to send flush singal back: {}", err);
+                            println!("[dlog] Failed to send flush signal back: {}", err);
                         }
                     }
                 }

@@ -1,5 +1,5 @@
 {
-  "name": "dlog-nodejs",
+  "name": "dlog_nodejs",
   "version": "0.3.0",
   "description": "Pure Node.JS bindings for dlog",
   "main": "lib/index.js",
@@ -14,13 +14,13 @@
     "neon-cli": "^0.8.0"
   },
   "scripts": {
-    "postinstall": "node-pre-gyp install --fallback-to-build=false"
+    "install": "node-pre-gyp install --fallback-to-build=false || neon build --release"
   },
   "homepage": "https://github.com/lennartvrg/dlog",
   "repository": {
     "type": "git",
     "url": "https://github.com/lennartvrg/dlog.git",
-    "directory": "nodejs"
+    "directory": "dlog_nodejs"
   },
   "keywords": [
     "logging",

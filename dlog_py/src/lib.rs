@@ -1,40 +1,41 @@
 use pyo3::prelude::*;
-use native::models::Priority;
 use pyo3::exceptions::PyValueError;
+
+use dlog_core::models::Priority;
 
 #[pyclass]
 struct PythonLogger {
-    native: native::Logger
+    core: dlog_core::Logger
 }
 
 #[pymethods]
 impl PythonLogger {
     #[new]
     fn __new__(api_key: String) -> PyResult<Self> {
-        match native::Logger::new(api_key) {
+        match dlog_core::Logger::new(api_key) {
             Err(err) => Err(PyValueError::new_err(err)),
             Ok(val) => Ok(Self {
-                native: val,
+                core: val,
             })
         }
     }
 
     fn log(&self, level: i32, message: String) -> PyResult<()> {
-        match self.native.log(convert_priority(level), message) {
+        match self.core.log(convert_priority(level), message) {
             Err(err) => Err(PyValueError::new_err(err)),
             Ok(_) => Ok(())
         }
     }
 
     fn flush(&self) -> PyResult<()> {
-        match self.native.flush() {
+        match self.core.flush() {
             Err(err) => Err(PyValueError::new_err(err)),
             Ok(_) => Ok(())
         }
     }
 
     fn clean_up(&self) -> PyResult<()> {
-        Ok(self.native.clean_up())
+        Ok(self.core.clean_up())
     }
 }
 
@@ -50,7 +51,7 @@ fn convert_priority(level: i32) -> Priority {
 }
 
 #[pymodule]
-fn dlog_python(_py: Python, m: &PyModule) -> PyResult<()> {
+fn dlog_py(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<PythonLogger>()?;
 
     Ok(())
