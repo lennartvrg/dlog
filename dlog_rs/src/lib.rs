@@ -103,7 +103,10 @@ impl Builder {
             Ok(val) => val,
         };
 
-        let logger = DlogLogger::new(native, self.level.unwrap_or(Level::Debug));
+        let level = self.level.unwrap_or(Level::Debug);
+        log::set_max_level(level.to_level_filter());
+
+        let logger = DlogLogger::new(native, level);
         if let Err(err) = log::set_boxed_logger(Box::new(logger)) {
             panic!("[dlog] Failed to configure dlog: {}", err)
         }
