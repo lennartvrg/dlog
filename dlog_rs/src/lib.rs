@@ -14,5 +14,5 @@ pub fn configure(api_key: impl Into<String>) {
         panic!("[dlog] Failed to configure dlog: {}", err)
     }
 
-    log::set_max_level(LevelFilter::Trace);
+    log::set_max_level(LevelFilter::Info);
 }
