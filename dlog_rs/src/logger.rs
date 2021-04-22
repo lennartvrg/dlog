@@ -4,19 +4,18 @@ use dlog_core::models::Priority;
 
 pub struct DlogLogger {
     core: dlog_core::Logger,
+    level: Level,
 }
 
 impl DlogLogger {
-    pub fn new(core: dlog_core::Logger) -> Self {
-        Self {
-            core,
-        }
+    pub fn new(core: dlog_core::Logger, level: Level) -> Self {
+        Self { core, level }
     }
 }
 
 impl log::Log for DlogLogger {
-    fn enabled(&self, _: &Metadata) -> bool {
-        true
+    fn enabled(&self, metadata: &Metadata) -> bool {
+        metadata.level() >= self.level
     }
 
     fn log(&self, record: &Record) {
