@@ -1,6 +1,6 @@
 [package]
 name = "dlog_rs"
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
 license = "MIT"
