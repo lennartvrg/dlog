@@ -1,6 +1,6 @@
 use neon::context::FunctionContext;
 use neon::result::{JsResult, Throw};
-use neon::types::{JsArray, JsBox, JsString, JsNumber};
+use neon::types::{JsArray, JsBox, JsNumber, JsString};
 
 use dlog_core::models::Priority;
 

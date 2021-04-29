@@ -1,11 +1,11 @@
-use pyo3::prelude::*;
 use pyo3::exceptions::PyValueError;
+use pyo3::prelude::*;
 
 use dlog_core::models::Priority;
 
 #[pyclass]
 struct PythonLogger {
-    core: dlog_core::Logger
+    core: dlog_core::Logger,
 }
 
 #[pymethods]
@@ -14,23 +14,21 @@ impl PythonLogger {
     fn __new__(api_key: String) -> PyResult<Self> {
         match dlog_core::Logger::new(api_key) {
             Err(err) => Err(PyValueError::new_err(err)),
-            Ok(val) => Ok(Self {
-                core: val,
-            })
+            Ok(val) => Ok(Self { core: val }),
         }
     }
 
     fn log(&self, level: i32, message: String) -> PyResult<()> {
         match self.core.log(convert_priority(level), message) {
             Err(err) => Err(PyValueError::new_err(err)),
-            Ok(_) => Ok(())
+            Ok(_) => Ok(()),
         }
     }
 
     fn flush(&self) -> PyResult<()> {
         match self.core.flush() {
             Err(err) => Err(PyValueError::new_err(err)),
-            Ok(_) => Ok(())
+            Ok(_) => Ok(()),
         }
     }
 

@@ -34,15 +34,13 @@ impl Log {
     }
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct LogRequest {
-    pub logs: Vec<Log>,
+#[derive(Serialize)]
+pub struct LogRequest<'a> {
+    pub logs: &'a [Log],
 }
 
-impl LogRequest {
-    pub fn new(logs: Vec<Log>) -> Self {
-        Self {
-            logs,
-        }
+impl<'a> LogRequest<'a> {
+    pub fn new(logs: &'a [Log]) -> Self {
+        Self { logs }
     }
 }

@@ -1,3 +1,4 @@
+use std::cmp::min;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
@@ -40,12 +41,13 @@ impl Logger {
         let handle = std::thread::spawn(move || {
             let client = HttpIngestor::new(api_key);
 
-            let has_api_key = client.log(Vec::with_capacity(0));
+            let has_api_key = client.log(&[]);
             if let Err(err) = thread_tx.send(Signal::HasValidApiKey(has_api_key)) {
                 println!("[dlog] Failed to signal API_KEY check: {}", err);
             }
 
             if has_api_key {
+                let mut backlog = Vec::<Log>::with_capacity(QUEUE_BUFFER);
                 let mut queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
 
                 let mut last_flush = std::time::Instant::now();
@@ -61,13 +63,42 @@ impl Logger {
                         Signal::Log(log) => {
                             queue.push(log);
                             false
-                        },
-                        _ => false
+                        }
+                        _ => false,
                     };
-    
-                    if  queue.len() > 0 && (flush || queue.len() >= QUEUE_BUFFER || last_flush.elapsed() >= MIN_FLUSH_INTERVAL) {
-                        client.log(queue);
-                        queue = Vec::<Log>::with_capacity(QUEUE_BUFFER);
+
+                    if !backlog.is_empty() {
+                        let mut failed_attempt = 0;
+                        backlog.append(&mut queue.drain(..queue.len()).collect());
+
+                        while !backlog.is_empty() {
+                            println!(
+                                "[dlog] Backlog has {} elements and a {}s backoff",
+                                backlog.len(),
+                                failed_attempt
+                            );
+
+                            let mut logs = backlog.drain(..min(100, backlog.len())).collect::<Vec<Log>>();
+                            if !client.log(&logs) {
+                                backlog.append(&mut logs);
+                                failed_attempt += 1;
+                                std::thread::sleep(std::time::Duration::from_secs(failed_attempt));
+                                while let Ok(log) = log_rx.try_recv() {
+                                    if let Signal::Log(log) = log {
+                                        backlog.push(log);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if queue.len() > 0
+                        && (flush || queue.len() >= QUEUE_BUFFER || last_flush.elapsed() >= MIN_FLUSH_INTERVAL)
+                    {
+                        if !client.log(&queue) {
+                            backlog.append(&mut queue)
+                        }
+                        queue.clear();
                         last_flush = std::time::Instant::now();
                     }
 
@@ -77,14 +108,16 @@ impl Logger {
                         }
                     }
                 }
-    
-                client.log(queue);
+
+                client.log(&queue);
             }
         });
 
         match thread_rx.recv() {
             Err(err) => println!("[dlog::configure] Failed to receive API_KEY check signal: {}", err),
-            Ok(Signal::HasValidApiKey(false)) => return Err("[dlog::configure] Please configure dlog with a valid API_KEY!".to_owned()),
+            Ok(Signal::HasValidApiKey(false)) => {
+                return Err("[dlog::configure] Please configure dlog with a valid API_KEY!".to_owned())
+            }
             _ => (),
         };
 
@@ -98,19 +131,19 @@ impl Logger {
 
     pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {
         match self.log_tx.send(Signal::Log(Log::new(priority, message))) {
-            Err(err) => Err(format!("Failed to move log to sender: {}", err)),
-            Ok(_) => Ok(()),
+            Err(err) if !self.flag.load(Ordering::Relaxed) => Err(format!("Failed to move log to sender: {}", err)),
+            _ => Ok(()),
         }
     }
 
     pub fn flush(&self) -> Result<(), String> {
         if let Err(err) = self.log_tx.send(Signal::Flush) {
-            return Err(format!("Failed to send thread signal: {}", err))
+            return Err(format!("Failed to send thread signal: {}", err));
         }
 
         match self.thread_rx.recv_timeout(FLUSH_TIMEOUT) {
             Err(flume::RecvTimeoutError::Disconnected) => Err(format!("Failed to receive thread signal")),
-            _ => Ok(())
+            _ => Ok(()),
         }
     }
 
@@ -120,8 +153,8 @@ impl Logger {
         let mut write = match self.handle.write() {
             Err(err) => {
                 println!("[dlog] Failed to get write lock during cleanup: {}", err);
-                return
-            },
+                return;
+            }
             Ok(val) => val,
         };
 

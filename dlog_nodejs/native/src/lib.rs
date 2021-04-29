@@ -4,7 +4,7 @@ mod extractor;
 
 use crate::extractor::Extractor;
 
-pub struct Logger (dlog_core::Logger);
+pub struct Logger(dlog_core::Logger);
 
 impl Finalize for Logger {}
 

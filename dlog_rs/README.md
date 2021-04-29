@@ -4,9 +4,11 @@ _________________
 
 <div align="center">
 
+[📦 - Crates.io](https://crates.io/crates/dlog_rs)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [🌐 - Web app](https://app.dlog.cloud)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[🐱‍💻 - Repository](https://github.com/lennartvrg/dlog)
+[🐱‍💻 - Repository](https://github.com/lennartvrg/dlog/tree/master/dlog_rs)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [📝 - Issues](https://github.com/lennartvrg/dlog/issues)
 </div>
@@ -22,7 +24,7 @@ can be observed in real-time or searched via a **full text search** capable quer
 
 _________________
 
-This **dlog** adapter for Rusts [`log`](https://crates.io/crates/log) crate is...
+This **dlog** adapter for the rust [`log`](https://crates.io/crates/log) crate is...
 
 - **Easy** to integrate for everyone who already uses the standard Rust [`log`](https://crates.io/crates/log) crate
 - **Efficient** by batching many logs together and only ingesting after `1000` logs have accumulated or after `1` second
@@ -35,7 +37,7 @@ This **dlog** adapter for Rusts [`log`](https://crates.io/crates/log) crate is..
 _________________
 
 This crate depends on the [`log`](https://crates.io/crates/log) crate as it is an adapter for said crate. It should work
-with every recent version. During development Cargo 1.51.0 and the stable toolchain is used.
+with every recent version. During development Cargo 1.51.0 and the stable toolchain was used.
 
 ## Getting Started
 
@@ -48,7 +50,7 @@ You can be part of multiple projects with a single account, so it not necessary 
 
 **2. Create a project**
 
-If you have a new account you should be greeted with an *Create Project* dialog. Pick a name for your new project and hit
+If you already have a new account, you should be greeted with an *Create Project* dialog. Pick a name for your new project and hit
 *Create*. If you already have a project you want to use, click it in the sidebar or in the general project list. To go
 to the project list, please click the *dlog.cloud* logo in the upper left corner. Here you can also create a new project.
 
@@ -70,7 +72,7 @@ in case you want to differentiate between different deployment environments such
 API_KEY simply click to plus icon on the right side, pick a name and hit *Create*.
 
 
-With the API_KEY generated, you are ready to install the module and configure dlog.
+With the `API_KEY` generated, you are ready to install the module and configure dlog.
 
 **6. Install and configure dlog_rs**
 
@@ -79,7 +81,7 @@ Ensure that the `Cargo.toml` contains something like this
 ```toml
 [dependencies]
 log = "0.4.14"
-dlog_rs = "0.3.0"
+dlog_rs = "1.0.0"
 ```
 
 To see how to configure `dlog_rs`, please consult the [Basic Example](#basic).
@@ -101,7 +103,7 @@ extern crate log;
 use std::env;
 
 fn main() {
-    dlog_rs::configure(env::var("DLOG_API_KEY").unwrap());
+    dlog_rs::configure("<API_KEY>");
 
     info!("Hello, world!");
 
@@ -109,9 +111,32 @@ fn main() {
     // logs are flushed when the application exits.
     log::logger().flush();
 }
-
 ```
 
+### `API_KEY` from environmental variable or with custom log level
+
+You can also load the `API_KEY` from an environmental variable using the builder pattern. Here you can also set the
+minimum log level which should be logged to dlog.
+
+```rust
+#[macro_use]
+extern crate log;
+
+use std::env;
+
+fn main() {
+     dlog_rs::Builder::new()
+         .with_env_api_key("DLOG_API_KEY")
+         .with_level(log::Level::Info)
+         .build();
+
+    info!("Hello, world!");
+
+    // This is not required but it makes sure that all
+    // logs are flushed when the application exits.
+    log::logger().flush();
+}
+```
 
 ## API Reference
 

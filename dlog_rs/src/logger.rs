@@ -19,10 +19,7 @@ impl log::Log for DlogLogger {
     }
 
     fn log(&self, record: &Record) {
-        if let Err(err) = self
-            .core
-            .log(convert_level(record.level()), record.args().to_string())
-        {
+        if let Err(err) = self.core.log(convert_level(record.level()), record.args().to_string()) {
             eprintln!("[dlog] Error during log: {}", err)
         }
     }
