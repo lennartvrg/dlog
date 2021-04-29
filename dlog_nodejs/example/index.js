@@ -6,4 +6,4 @@ const handler = (event) => {
 
 exports.handler =  dlog.with_dlog(process.env.DLOG_API_KEY, handler)
 
-this.handler("Test")
+handler("Test");

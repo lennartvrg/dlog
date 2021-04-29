@@ -1,12 +1,14 @@
-# dlog - Logging for microservice architectures
+# dlog - Logging for microservice architectures &nbsp; ![PyPI](https://img.shields.io/pypi/v/dlog-py?color=blue)
 
 _________________
 
 <div align="center">
 
+[📦 - PyPI](https://pypi.org/project/dlog_py/)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [🌐 - Web app](https://app.dlog.cloud)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[🐱‍💻 - Repository](https://github.com/lennartvrg/dlog)
+[🐱‍💻 - Repository](https://github.com/lennartvrg/dlog/tree/master/dlog_py)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [📝 - Issues](https://github.com/lennartvrg/dlog/issues)
 </div>
@@ -35,7 +37,7 @@ This **dlog** adapter for python `logging` is...
 _________________
 
 Since this module uses natively compiled code under the hood, ait only supports some operating systems and python versions.
-If you desperatly need a version for another architecture / python version please open an issue on our
+If you desperately need a version for another architecture / python version please open an issue on our
 [📝 GitHub](https://github.com/lennartvrg/dlog/issues). Below you can find a matrix of our supported python versions and
 architectures.
 
@@ -57,7 +59,7 @@ You can be part of multiple projects with a single account, so it not necessary 
 
 **2. Create a project**
 
-If you have a new account you should be greeted with an *Create Project* dialog. Pick a name for your new project and hit
+If you already have a new account, you should be greeted with an *Create Project* dialog. Pick a name for your new project and hit
 *Create*. If you already have a project you want to use, click it in the sidebar or in the general project list. To go
 to the project list, please click the *dlog.cloud* logo in the upper left corner. Here you can also create a new project.
 
@@ -79,7 +81,7 @@ in case you want to differentiate between different deployment environments such
 API_KEY simply click to plus icon on the right side, pick a name and hit *Create*.
 
 
-With the API_KEY generated, you are ready to install the module and configure dlog.
+With the `API_KEY` generated, you are ready to install the module and configure dlog.
 
 **6. Install and configure dlog_py**
 

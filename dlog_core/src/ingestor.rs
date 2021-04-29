@@ -16,26 +16,26 @@ impl HttpIngestor {
         }
     }
 
-    pub fn log(&self, logs: Vec<Log>) -> bool {
+    pub fn log(&self, logs: &[Log]) -> bool {
         match self.send(LogRequest::new(logs)) {
             Err(err) => {
                 println!("[dlog::internal] Failed to send logs: {}", err);
                 false
-            },
+            }
             Ok(val) if !val.status().is_success() => {
                 println!("[dlog::internal] An error occurred: {}", val.text().unwrap());
                 false
-            },
+            }
             _ => true,
         }
     }
 
     fn send<T: serde::Serialize + Sized>(&self, request: T) -> Result<reqwest::blocking::Response, reqwest::Error> {
-        self
-            .client
+        self.client
             .post("https://log.dlog.cloud")
             .json(&request)
             .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
+            .timeout(std::time::Duration::from_secs(3))
             .send()
     }
 }
