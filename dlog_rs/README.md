@@ -30,14 +30,13 @@ This **dlog** adapter for the rust [`log`](https://crates.io/crates/log) crate i
 - **Efficient** by batching many logs together and only ingesting after `1000` logs have accumulated or after `1` second
   has passed.
 - **Non-blocking** by building upon a native library which offloads the ingestion to a background thread
-- **Compatible** with serverless environments such as AWS Lambda which is often a problem for other logging frameworks
 
 
 ## Requirements
 _________________
 
 This crate depends on the [`log`](https://crates.io/crates/log) crate as it is an adapter for said crate. It should work
-with every recent version. During development Cargo 1.51.0 and the stable toolchain was used.
+with every recent version. During development Rust 1.51.0 and the stable toolchain were used.
 
 ## Getting Started
 
