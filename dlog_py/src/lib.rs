@@ -32,8 +32,8 @@ impl PythonLogger {
         }
     }
 
-    fn clean_up(&self) -> PyResult<()> {
-        Ok(self.core.clean_up())
+    fn clean_up(&self) {
+        self.core.clean_up()
     }
 }
 

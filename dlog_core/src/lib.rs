@@ -71,7 +71,7 @@ impl Logger {
                         let mut failed_attempt = 0;
                         backlog.append(&mut queue.drain(..queue.len()).collect());
 
-                        log::info("[dlog] Back log with {} logs will be committed", backlog.len());
+                        println!("[dlog] Back log with {} logs will be committed", backlog.len());
                         while !backlog.is_empty() {
                             let mut logs = backlog.drain(..min(QUEUE_BUFFER, backlog.len())).collect::<Vec<Log>>();
                             if !client.log(&logs) {
@@ -87,7 +87,7 @@ impl Logger {
                         }
                     }
 
-                    if queue.len() > 0
+                    if !queue.is_empty()
                         && (flush || queue.len() >= QUEUE_BUFFER || last_flush.elapsed() >= MIN_FLUSH_INTERVAL)
                     {
                         if !client.log(&queue) {
@@ -137,7 +137,7 @@ impl Logger {
         }
 
         match self.thread_rx.recv_timeout(FLUSH_TIMEOUT) {
-            Err(flume::RecvTimeoutError::Disconnected) => Err(format!("Failed to receive thread signal")),
+            Err(flume::RecvTimeoutError::Disconnected) => Err("Failed to receive thread signal".to_string()),
             _ => Ok(()),
         }
     }

@@ -82,7 +82,7 @@ impl Builder {
     ///
     /// * `env_var` - The name of the environmental variable where this API_KEY is stored
     pub fn with_env_api_key(mut self, env_var: impl Into<String>) -> Self {
-        self.api_key = Some(std::env::var(env_var.into()).unwrap_or(Default::default()));
+        self.api_key = Some(std::env::var(env_var.into()).unwrap_or_default());
         self
     }
 
@@ -98,7 +98,7 @@ impl Builder {
 
     /// Consumes the builder and configures dlog according to the builders configuration.
     pub fn build(self) {
-        let native = match dlog_core::Logger::new(self.api_key.unwrap_or(Default::default())) {
+        let native = match dlog_core::Logger::new(self.api_key.unwrap_or_default()) {
             Err(err) => panic!("[dlog] Failed to configure dlog: {}", err),
             Ok(val) => val,
         };
@@ -110,5 +110,11 @@ impl Builder {
         if let Err(err) = log::set_boxed_logger(Box::new(logger)) {
             panic!("[dlog] Failed to configure dlog: {}", err)
         }
+    }
+}
+
+impl Default for Builder {
+    fn default() -> Self {
+        Self::new()
     }
 }
