@@ -71,14 +71,9 @@ impl Logger {
                         let mut failed_attempt = 0;
                         backlog.append(&mut queue.drain(..queue.len()).collect());
 
+                        log::info("[dlog] Back log with {} logs will be committed", backlog.len());
                         while !backlog.is_empty() {
-                            println!(
-                                "[dlog] Backlog has {} elements and a {}s backoff",
-                                backlog.len(),
-                                failed_attempt
-                            );
-
-                            let mut logs = backlog.drain(..min(100, backlog.len())).collect::<Vec<Log>>();
+                            let mut logs = backlog.drain(..min(QUEUE_BUFFER, backlog.len())).collect::<Vec<Log>>();
                             if !client.log(&logs) {
                                 backlog.append(&mut logs);
                                 failed_attempt += 1;

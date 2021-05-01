@@ -35,7 +35,7 @@ impl HttpIngestor {
             .post("https://log.dlog.cloud")
             .json(&request)
             .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
-            .timeout(std::time::Duration::from_secs(3))
+            .timeout(std::time::Duration::from_secs(10))
             .send()
     }
 }
