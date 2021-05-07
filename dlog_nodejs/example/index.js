@@ -4,6 +4,6 @@ const handler = (event) => {
     console.log('This is my message for you: ' + JSON.stringify(event))
 }
 
-exports.handler =  dlog.with_dlog(process.env.DLOG_API_KEY, handler)
+exports.lambda =  dlog.with_dlog(process.env.DLOG_API_KEY, handler)
 
-handler("Test");
+exports.lambda("Hello World");

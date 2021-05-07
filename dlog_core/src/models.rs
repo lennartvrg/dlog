@@ -43,11 +43,11 @@ pub struct Log {
 }
 
 impl Log {
-    pub fn new(priority: Priority, message: String) -> Self {
+    pub fn new(priority: Priority, message: impl Into<String>) -> Self {
         Self {
             timestamp: Utc::now(),
             priority,
-            message,
+            message: message.into(),
         }
     }
 }

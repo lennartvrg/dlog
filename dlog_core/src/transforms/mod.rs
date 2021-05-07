@@ -3,21 +3,23 @@ mod email;
 
 use crate::models::Log;
 use crate::transforms::console::ConsoleTransform;
+use crate::transforms::email::EmailTransform;
 
-pub trait Transform {
+pub trait Transform: Send {
     fn apply(&self, log: &mut Log);
 }
 
 pub struct Transforms {
-    transforms: Vec<Box<dyn Transform>>
+    transforms: Vec<Box<dyn Transform>>,
 }
 
 impl Transforms {
     pub fn new() -> Self {
         Self {
             transforms: vec![
-                Box::new(ConsoleTransform)
-            ]
+                Box::new(EmailTransform),
+                Box::new(ConsoleTransform),
+            ],
         }
     }
 }

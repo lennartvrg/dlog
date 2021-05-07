@@ -11,10 +11,12 @@ pub struct EmailTransform;
 
 impl Transform for EmailTransform {
     fn apply(&self, log: &mut Log) {
-        log.message = log.message.split(' ')
+        log.message = log
+            .message
+            .split(' ')
             .map(|val| match EMAIL.is_match(val) {
-                true => "*".repeat(val.len()),
-                false => String::from(val)
+                true => "•".repeat(val.len()),
+                false => String::from(val),
             })
             .collect::<Vec<String>>()
             .join(" ");

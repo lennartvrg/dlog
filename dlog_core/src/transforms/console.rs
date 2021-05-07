@@ -1,5 +1,5 @@
-use crate::transforms::Transform;
 use crate::models::Log;
+use crate::transforms::Transform;
 
 pub struct ConsoleTransform;
 

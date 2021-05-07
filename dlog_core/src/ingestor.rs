@@ -1,41 +1,42 @@
 use reqwest::header::HeaderValue;
 
-use crate::models::{Log, LogRequest};
+use crate::models::{Log, LogRequest, Priority};
 
 #[derive(Debug)]
 pub struct HttpIngestor {
-    client: reqwest::blocking::Client,
+    client: reqwest::Client,
     api_key: String,
 }
 
 impl HttpIngestor {
     pub fn new(api_key: String) -> Self {
         Self {
-            client: reqwest::blocking::Client::new(),
+            client: reqwest::Client::new(),
             api_key,
         }
     }
 
-    pub fn log(&self, logs: &[Log]) -> bool {
-        match self.send(LogRequest::new(logs)) {
-            Err(err) => {
-                println!("[dlog::internal] Failed to send logs: {}", err);
-                false
-            }
-            Ok(val) if !val.status().is_success() => {
-                println!("[dlog::internal] An error occurred: {}", val.text().unwrap());
-                false
-            }
-            _ => true,
+    pub async fn log_async(&self, logs: &[Log]) -> Result<(), Log> {
+        match self.send_async(LogRequest::new(logs)).await {
+            Err(err) => Err(Log::new(
+                Priority::Critical,
+                format!("[dlog] API connection error: {}", err),
+            )),
+            Ok(val) if !val.status().is_success() => Err(Log::new(
+                Priority::Critical,
+                format!("[dlog] Log ingestion failed: {}", val.text().await.unwrap_or_default()),
+            )),
+            _ => Ok(()),
         }
     }
 
-    fn send<T: serde::Serialize + Sized>(&self, request: T) -> Result<reqwest::blocking::Response, reqwest::Error> {
+    async fn send_async<T: serde::Serialize + Sized>(&self, request: T) -> Result<reqwest::Response, reqwest::Error> {
         self.client
             .post("https://log.dlog.cloud")
             .json(&request)
             .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
             .timeout(std::time::Duration::from_secs(10))
             .send()
+            .await
     }
 }

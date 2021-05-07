@@ -19,10 +19,9 @@ function isStacktrace(arg) {
     }
 }
 
-function apply(original, level) {
+function apply(level) {
     return function(...args) {
-        original(...args)
-        addon.log(instance, isStacktrace(args[0]) ? TRACE : level, args);
+        addon.log(instance, isStacktrace(args[0]) ? TRACE : level, args)
     }
 }
 
@@ -42,11 +41,11 @@ module.exports.configure = function (api_key) {
         console.debug
     ];
 
-    console.error = apply(error, ERROR);
-    console.warn = apply(warn, WARN);
-    console.info = apply(info, INFO);
-    console.log = apply(log, INFO);
-    console.debug = apply(debug, DEBUG);
+    console.error = apply(ERROR);
+    console.warn = apply(WARN);
+    console.info = apply(INFO);
+    console.log = apply(INFO);
+    console.debug = apply(DEBUG);
 }
 
 module.exports.with_dlog = function (API_KEY, handler) {
