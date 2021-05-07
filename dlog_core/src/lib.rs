@@ -1,4 +1,4 @@
-use std::sync::{RwLock};
+use std::sync::RwLock;
 
 mod ingestor;
 pub mod models;
