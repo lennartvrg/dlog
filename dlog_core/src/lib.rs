@@ -4,23 +4,20 @@ use std::sync::{Arc, RwLock};
 use std::thread::JoinHandle;
 
 mod ingestor;
+mod transforms;
+mod worker;
 pub mod models;
 
 use crate::ingestor::HttpIngestor;
 use crate::models::{Log, Priority};
+use crate::transforms::{Transforms, Transform};
+use crate::worker::Signal;
 
 const QUEUE_BUFFER: usize = 1_000;
 
 const FLUSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(5);
 const MIN_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_secs(1);
 const MIN_LOOP_INTERVAL: std::time::Duration = std::time::Duration::from_millis(100);
-
-enum Signal {
-    HasValidApiKey(bool),
-    Log(Log),
-    Flush,
-    None,
-}
 
 #[derive(Debug)]
 pub struct Logger {
@@ -39,6 +36,7 @@ impl Logger {
 
         let (thread_tx, thread_rx) = flume::unbounded::<Signal>();
         let handle = std::thread::spawn(move || {
+            let transforms = Transforms::new();
             let client = HttpIngestor::new(api_key);
 
             let has_api_key = client.log(&[]);
@@ -60,7 +58,8 @@ impl Logger {
 
                     let flush = match signal {
                         Signal::Flush => true,
-                        Signal::Log(log) => {
+                        Signal::Log(mut log) => {
+                            transforms.apply(&mut log);
                             queue.push(log);
                             false
                         }

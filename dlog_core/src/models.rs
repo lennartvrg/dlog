@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Priority {
@@ -13,6 +14,23 @@ pub enum Priority {
     Debug,
     Trace,
     None,
+}
+
+impl Display for Priority {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Emergency => write!(f, "Emergency"),
+            Self::Alert => write!(f, "Alert"),
+            Self::Critical => write!(f, "Critical"),
+            Self::Error => write!(f, "Error"),
+            Self::Warning => write!(f, "Warning"),
+            Self::Notice => write!(f, "Notice"),
+            Self::Informational => write!(f, "Informational"),
+            Self::Debug => write!(f, "Debug"),
+            Self::Trace => write!(f, "Trace"),
+            Self::None => write!(f, "None"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize)]
