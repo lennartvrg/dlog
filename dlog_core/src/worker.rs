@@ -79,7 +79,7 @@ impl Worker {
     }
 
     async fn flush(&mut self) {
-        if self.queue.len() > 0 {
+        if !self.queue.is_empty() {
             let logs = self.queue.drain(..).collect::<Vec<Log>>();
             if let Err(log) = self.ingest.log_async(&logs).await {
                 if let Err(err) = self.signal_sender.send_async(Signal::Log(log)).await {

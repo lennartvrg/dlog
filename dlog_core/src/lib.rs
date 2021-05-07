@@ -68,9 +68,6 @@ impl Logger {
             Ok(val) => val,
         };
 
-        match write.take() {
-            None => return,
-            Some(_) => (),
-        };
+        let _ = write.take();
     }
 }
