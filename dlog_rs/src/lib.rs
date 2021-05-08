@@ -1,4 +1,5 @@
 #![crate_name = "dlog_rs"]
+use dlog_core::transforms::Transforms;
 use log::Level;
 
 use crate::logger::DlogLogger;
@@ -55,6 +56,7 @@ pub fn configure(api_key: impl Into<String>) {
 pub struct Builder {
     api_key: Option<String>,
     level: Option<Level>,
+    transforms: Transforms,
 }
 
 impl Builder {
@@ -63,6 +65,7 @@ impl Builder {
         Self {
             api_key: None,
             level: None,
+            ..Default::default()
         }
     }
 
@@ -96,9 +99,25 @@ impl Builder {
         self
     }
 
+    /// Adds the a email sanitizer which tries to remove all email addresses
+    /// from the log messages. This is a best effort sanitizer and there is no guarantee
+    /// the it will catch 100% of all valid email addresses.
+    pub fn with_email_sanitizer(mut self) -> Self {
+        self.transforms.add_email_sanitizer(true);
+        self
+    }
+
+    /// Adds the a credit card sanitizer which tries to remove all credit card number
+    /// from the log messages. This is a best effort sanitizer and there is no guarantee
+    /// the it will catch 100% of all credit card formats.
+    pub fn with_credit_card_sanitizer(mut self) -> Self {
+        self.transforms.add_credit_card_sanitizer(true);
+        self
+    }
+
     /// Consumes the builder and configures dlog according to the builders configuration.
     pub fn build(self) {
-        let native = match dlog_core::Logger::new(self.api_key.unwrap_or_default()) {
+        let native = match dlog_core::Logger::new(self.api_key.unwrap_or_default(), self.transforms) {
             Err(err) => panic!("[dlog] Failed to configure dlog: {}", err),
             Ok(val) => val,
         };
