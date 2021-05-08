@@ -18,12 +18,26 @@ pub struct Transforms {
 impl Transforms {
     pub fn new() -> Self {
         Self {
-            transforms: vec![
-                Box::new(CreditCardTransform),
-                Box::new(EmailTransform),
-                Box::new(ConsoleTransform),
-            ],
+            transforms: vec![Box::new(ConsoleTransform)],
         }
+    }
+
+    pub fn add_credit_card_sanitizer(&mut self, add: bool) {
+        if add {
+            self.transforms.insert(0, Box::new(CreditCardTransform));
+        }
+    }
+
+    pub fn add_email_sanitizer(&mut self, add: bool) {
+        if add {
+            self.transforms.insert(0, Box::new(EmailTransform));
+        }
+    }
+}
+
+impl Default for Transforms {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

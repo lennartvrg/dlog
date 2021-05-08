@@ -2,6 +2,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 use dlog_core::models::Priority;
+use dlog_core::transforms::Transforms;
 
 #[pyclass]
 struct PythonLogger {
@@ -11,8 +12,12 @@ struct PythonLogger {
 #[pymethods]
 impl PythonLogger {
     #[new]
-    fn __new__(api_key: String) -> PyResult<Self> {
-        match dlog_core::Logger::new(api_key) {
+    fn __new__(api_key: String, email_sanitizer: bool, credit_card_sanitizer: bool) -> PyResult<Self> {
+        let mut transforms = Transforms::new();
+        transforms.add_credit_card_sanitizer(credit_card_sanitizer);
+        transforms.add_email_sanitizer(email_sanitizer);
+
+        match dlog_core::Logger::new(api_key, transforms) {
             Err(err) => Err(PyValueError::new_err(err)),
             Ok(val) => Ok(Self { core: val }),
         }

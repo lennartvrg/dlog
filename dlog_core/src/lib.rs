@@ -3,7 +3,7 @@ use std::sync::RwLock;
 mod backlog;
 mod ingest;
 pub mod models;
-mod transforms;
+pub mod transforms;
 mod worker;
 
 use crate::models::{Log, Priority};
@@ -20,12 +20,12 @@ pub struct Logger {
 }
 
 impl Logger {
-    pub fn new(api_key: String) -> Result<Self, String> {
-        let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, Transforms::new())?;
+    pub fn new(api_key: String, transforms: Transforms) -> Result<Self, String> {
+        let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, transforms)?;
 
         let runtime = tokio::runtime::Runtime::new().unwrap();
         if !runtime.block_on(worker.has_valid_api_key()) {
-            return Err(String::from("[dlog] Please configure dlog with a valid API_KEY"))
+            return Err(String::from("[dlog] Please configure dlog with a valid API_KEY"));
         }
 
         runtime.spawn(async move {

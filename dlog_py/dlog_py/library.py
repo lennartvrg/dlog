@@ -3,10 +3,10 @@ from .dlog_py import PythonLogger as _PythonLogger
 
 
 class DlogLogger(logging.StreamHandler):
-    def __init__(self, api_key):
+    def __init__(self, api_key, sanitize_emails=False, sanitize_credit_cards=False):
         logging.StreamHandler.__init__(self)
         try:
-            self.instance = _PythonLogger(api_key)
+            self.instance = _PythonLogger(api_key, sanitize_emails, sanitize_credit_cards)
         except ValueError as ex:
             print(ex)
 
@@ -23,11 +23,11 @@ class DlogLogger(logging.StreamHandler):
             self.instance.clean_up()
 
 
-def with_dlog(api_key, level=None):
+def with_dlog(api_key, level=None, sanitize_emails=False, sanitize_credit_cards=False):
     if level is None:
         level = logging.WARNING
 
-    dlog = DlogLogger(api_key)
+    dlog = DlogLogger(api_key, sanitize_emails, sanitize_credit_cards)
 
     logger = logging.getLogger('log')
     logger.setLevel(level)

@@ -1,8 +1,8 @@
 use flume::RecvError;
-use std::sync::Arc;
-use tokio::time::timeout;
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::time::{Instant, Duration};
+use std::sync::Arc;
+use std::time::{Duration, Instant};
+use tokio::time::timeout;
 
 use crate::backlog::{Backlog, BacklogSignal};
 use crate::ingest::HttpIngestor;

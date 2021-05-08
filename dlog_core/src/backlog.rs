@@ -1,12 +1,12 @@
 use directories::ProjectDirs;
+use std::cmp::min;
 use std::fs::OpenOptions;
-use std::io::{Write, BufReader, BufRead};
+use std::io::{BufRead, BufReader, Write};
+use std::path::PathBuf;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use std::cmp::min;
-use std::path::PathBuf;
 use tokio::time::timeout;
-use std::sync::atomic::{AtomicBool, Ordering};
 
 use crate::ingest::HttpIngestor;
 use crate::models::Log;
@@ -22,7 +22,7 @@ pub struct Backlog {
     dirs: ProjectDirs,
     exit: bool,
     queue: Vec<Log>,
-    is_empty: Arc<AtomicBool>
+    is_empty: Arc<AtomicBool>,
 }
 
 const BACKLOG_CHUNK_SIZE: usize = 1_000;
@@ -79,11 +79,14 @@ impl Backlog {
             self.load_from_disk();
             self.is_empty.store(true, Ordering::Relaxed);
             while !self.queue.is_empty() {
-                let mut logs = self.queue.drain(..min(self.queue.len(), BACKLOG_CHUNK_SIZE)).collect::<Vec<Log>>();
+                let mut logs = self
+                    .queue
+                    .drain(..min(self.queue.len(), BACKLOG_CHUNK_SIZE))
+                    .collect::<Vec<Log>>();
                 if let Err(err) = self.ingest.log_async(&logs).await {
                     self.queue.append(&mut logs);
                     self.queue.push(err);
-                    return
+                    return;
                 }
             }
         } else if !self.queue.is_empty() {
@@ -130,7 +133,7 @@ impl Backlog {
                 .append(true)
                 .create(create)
                 .open(path)
-                .ok()
+                .ok(),
         }
     }
 
