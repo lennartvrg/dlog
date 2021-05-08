@@ -3,6 +3,7 @@ members = [
     "dlog_core",
     "dlog_py",
     "dlog_rs",
+    "dlog_rs/example",
     "dlog_nodejs/native",
 ]
 
