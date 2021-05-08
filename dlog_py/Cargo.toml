@@ -1,6 +1,6 @@
 [package]
 name = "dlog_py"
-version = "1.1.0"
+version = "1.1.2"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
 
@@ -17,7 +17,7 @@ crate-type = ["cdylib"]
 [dependencies]
 pyo3 = { version = "0.13.2", features = ["extension-module"] }
 
-dlog_core = { version = "1.1.0", path = "../dlog_core" }
+dlog_core = { version = "1.1.2", path = "../dlog_core" }
 
 [package.metadata.maturin]
 name = "dlog_py"

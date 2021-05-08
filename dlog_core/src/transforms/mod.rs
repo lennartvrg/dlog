@@ -7,7 +7,7 @@ use crate::transforms::console::ConsoleTransform;
 use crate::transforms::credit_card::CreditCardTransform;
 use crate::transforms::email::EmailTransform;
 
-pub trait Transform: Send {
+pub trait Transform: Send + Sync {
     fn apply(&self, log: &mut Log);
 }
 
