@@ -16,6 +16,15 @@ impl HttpIngestor {
         }
     }
 
+    pub async fn has_valid_api_key(&self) -> bool {
+        if let Ok(res) = self.send_async(LogRequest::new(&[])).await {
+            if res.text().await.unwrap_or_default().contains("Invalid API_KEY") {
+                return false
+            }
+        }
+        return true
+    }
+
     pub async fn check(&self) -> bool {
         match self.send_async(LogRequest::new(&[])).await {
             Ok(res) if res.status().is_success() => true,

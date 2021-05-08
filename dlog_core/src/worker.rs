@@ -55,6 +55,10 @@ impl Worker {
         Ok((instance, backlog, signal_sender, flush_receiver))
     }
 
+    pub async fn has_valid_api_key(&self) -> bool {
+        self.ingest.has_valid_api_key().await
+    }
+
     pub async fn start(&mut self) {
         let mut last_check = Instant::now();
         while !self.exit {

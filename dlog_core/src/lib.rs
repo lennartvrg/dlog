@@ -24,6 +24,10 @@ impl Logger {
         let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, Transforms::new())?;
 
         let runtime = tokio::runtime::Runtime::new().unwrap();
+        if !runtime.block_on(worker.has_valid_api_key()) {
+            return Err(String::from("[dlog] Please configure dlog with a valid API_KEY"))
+        }
+
         runtime.spawn(async move {
             let _ = futures::future::try_join_all(vec![
                 tokio::task::spawn(async move { worker.start().await }),
