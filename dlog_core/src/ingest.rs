@@ -26,10 +26,7 @@ impl HttpIngestor {
     }
 
     pub async fn check(&self) -> bool {
-        match self.send_async(LogRequest::new(&[])).await {
-            Ok(res) if res.status().is_success() => true,
-            _ => false,
-        }
+        matches!(self.send_async(LogRequest::new(&[])).await, Ok(res) if res.status().is_success())
     }
 
     pub async fn log_async(&self, logs: &[Log]) -> Result<(), Log> {

@@ -65,7 +65,7 @@ impl Builder {
         Self {
             api_key: None,
             level: None,
-            ..Default
+            ..Default::default()
         }
     }
 
