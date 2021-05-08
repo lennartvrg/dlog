@@ -16,6 +16,13 @@ impl HttpIngestor {
         }
     }
 
+    pub async fn check(&self) -> bool {
+        match self.send_async(LogRequest::new(&[])).await {
+            Ok(res) if res.status().is_success() => true,
+            _ => false,
+        }
+    }
+
     pub async fn log_async(&self, logs: &[Log]) -> Result<(), Log> {
         match self.send_async(LogRequest::new(logs)).await {
             Err(err) => Err(Log::new(
@@ -35,7 +42,7 @@ impl HttpIngestor {
             .post("https://log.dlog.cloud")
             .json(&request)
             .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
-            .timeout(std::time::Duration::from_secs(10))
+            .timeout(std::time::Duration::from_secs(5))
             .send()
             .await
     }

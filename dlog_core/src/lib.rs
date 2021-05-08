@@ -1,6 +1,7 @@
 use std::sync::RwLock;
 
-mod ingestor;
+mod backlog;
+mod ingest;
 pub mod models;
 mod transforms;
 mod worker;
@@ -20,11 +21,15 @@ pub struct Logger {
 
 impl Logger {
     pub fn new(api_key: String) -> Result<Self, String> {
-        let (mut worker, signal_sender, flush_receiver) = Worker::new(api_key, Transforms::new())?;
+        let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, Transforms::new())?;
 
         let runtime = tokio::runtime::Runtime::new().unwrap();
         runtime.spawn(async move {
-            worker.start().await;
+            let _ = futures::future::try_join_all(vec![
+                tokio::task::spawn(async move { worker.start().await }),
+                tokio::task::spawn(async move { backlog.start().await }),
+            ])
+            .await;
         });
 
         Ok(Self {
