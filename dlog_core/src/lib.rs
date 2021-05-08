@@ -23,18 +23,25 @@ impl Logger {
     pub fn new(api_key: String, transforms: Transforms) -> Result<Self, String> {
         let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, transforms)?;
 
+        let (valid_tx, valid_rx) = flume::bounded(1);
         let runtime = tokio::runtime::Runtime::new().unwrap();
-        if !runtime.block_on(worker.has_valid_api_key()) {
-            return Err(String::from("[dlog] Please configure dlog with a valid API_KEY"));
-        }
-
         runtime.spawn(async move {
+            if let Err(err) = valid_tx.send(worker.has_valid_api_key().await) {
+                panic!("[dlog] Internal error: The API_KEY channel is closed (Sending end) | {}", err)
+            }
+
             let _ = futures::future::try_join_all(vec![
                 tokio::task::spawn(async move { worker.start().await }),
                 tokio::task::spawn(async move { backlog.start().await }),
             ])
             .await;
         });
+
+        match valid_rx.recv() {
+            Err(err) => panic!("[dlog] Internal error: The API_KEY channel is closed (Receiving end) | {}", err),
+            Ok(false) => return Err(String::from("[dlog] Please configure dlog with a valid API_KEY")),
+            _ => (),
+        };
 
         Ok(Self {
             signal_sender,
