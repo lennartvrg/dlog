@@ -10,7 +10,7 @@ use crate::models::{Log, Priority};
 use crate::transforms::Transforms;
 use crate::worker::{Signal, Worker};
 
-const FLUSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
+const FLUSH_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(3);
 
 #[derive(Debug)]
 pub struct Logger {
@@ -21,13 +21,17 @@ pub struct Logger {
 
 impl Logger {
     pub fn new(api_key: String, transforms: Transforms) -> Result<Self, String> {
-        let (mut worker, mut backlog, signal_sender, flush_receiver) = Worker::new(api_key, transforms)?;
+        let (mut worker, mut backlog) = Worker::new(api_key, transforms)?;
+        let (signal_sender, flush_receiver) = (worker.signal_sender.clone(), worker.flush_receiver.clone());
 
         let (valid_tx, valid_rx) = flume::bounded(1);
         let runtime = tokio::runtime::Runtime::new().unwrap();
         runtime.spawn(async move {
             if let Err(err) = valid_tx.send(worker.has_valid_api_key().await) {
-                panic!("[dlog] Internal error: The API_KEY channel is closed (Sending end) | {}", err)
+                panic!(
+                    "[dlog::logger] Internal error: The API_KEY channel is closed (Sending end) | {}",
+                    err
+                )
             }
 
             let _ = futures::future::try_join_all(vec![
@@ -38,10 +42,22 @@ impl Logger {
         });
 
         match valid_rx.recv() {
-            Err(err) => panic!("[dlog] Internal error: The API_KEY channel is closed (Receiving end) | {}", err),
-            Ok(false) => return Err(String::from("[dlog] Please configure dlog with a valid API_KEY")),
+            Err(err) => panic!(
+                "[dlog::logger] Internal error: The API_KEY channel is closed (Receiving end) | {}",
+                err
+            ),
+            Ok(false) => {
+                return Err(String::from(
+                    "[dlog::logger] Please configure dlog with a valid API_KEY",
+                ))
+            }
             _ => (),
         };
+
+        // Wait for first flush signal => Ready to be used
+        if let Err(err) = flush_receiver.recv_timeout(std::time::Duration::from_secs(3)) {
+            eprintln!("[dlog::logger] Failed to receive ready signal: {}", err);
+        }
 
         Ok(Self {
             signal_sender,
@@ -52,33 +68,40 @@ impl Logger {
 
     pub fn log(&self, priority: Priority, message: String) -> Result<(), String> {
         match self.signal_sender.send(Signal::Log(Log::new(priority, message))) {
-            Err(err) => Err(format!("Failed to move log to sender: {}", err)),
+            Err(err) => Err(format!("[dlog::logger] Failed to move log to sender: {}", err)),
             _ => Ok(()),
         }
     }
 
     pub fn flush(&self) -> Result<(), String> {
         if let Err(err) = self.signal_sender.send(Signal::Flush) {
-            return Err(format!("Failed to send thread signal: {}", err));
+            return Err(format!("[dlog::logger] Failed to send thread signal: {}", err));
         }
 
         match self.flush_receiver.recv_timeout(FLUSH_TIMEOUT) {
-            Err(flume::RecvTimeoutError::Disconnected) => Err("Failed to receive thread signal".to_string()),
+            Err(flume::RecvTimeoutError::Disconnected) => {
+                Err("[dlog::logger] Failed to receive thread signal".to_string())
+            }
             _ => Ok(()),
         }
     }
 
     pub fn clean_up(&self) {
         match self.signal_sender.send(Signal::Exit) {
-            Err(err) => println!("[dlog] Could not send exit signal, some logs might be lost: {}", err),
+            Err(err) => println!(
+                "[dlog::logger] Could not send exit signal, some logs might be lost: {}",
+                err
+            ),
             Ok(_) => {
-                let _ = self.flush_receiver.recv_timeout(FLUSH_TIMEOUT);
+                if let Err(err) = self.flush_receiver.recv_timeout(FLUSH_TIMEOUT) {
+                    eprintln!("[dlog::logger] Failed to exit signal response: {}", err);
+                }
             }
         }
 
         let mut write = match self.handle.write() {
             Err(err) => {
-                println!("[dlog] Failed to get write lock during cleanup: {}", err);
+                println!("[dlog::logger] Failed to get write lock during cleanup: {}", err);
                 return;
             }
             Ok(val) => val,
