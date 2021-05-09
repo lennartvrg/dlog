@@ -10,8 +10,8 @@ use crate::models::Log;
 use crate::transforms::{Transform, Transforms};
 
 const DEFAULT_QUEUE_LENGTH: usize = 1_000;
-const MIN_LOOP_INTERVAL: Duration = Duration::from_millis(50);
 const MIN_FLUSH_INTERVAL: Duration = Duration::from_secs(1);
+const MIN_LOOP_INTERVAL: Duration = Duration::from_millis(50);
 
 pub enum Signal {
     Log(Log),
@@ -25,21 +25,21 @@ pub struct Worker {
     ingest: Arc<HttpIngestor>,
     transforms: Transforms,
     signal_receiver: flume::Receiver<Signal>,
+    pub signal_sender: flume::Sender<Signal>,
     flush_sender: flume::Sender<()>,
+    pub flush_receiver: flume::Receiver<()>,
     backlog_sender: flume::Sender<BacklogSignal>,
     is_backlog_empty: Arc<AtomicBool>,
+    backlog_flush_receiver: flume::Receiver<()>,
 }
 
 impl Worker {
-    pub fn new(
-        api_key: String,
-        transforms: Transforms,
-    ) -> Result<(Self, Backlog, flume::Sender<Signal>, flume::Receiver<()>), String> {
+    pub fn new(api_key: String, transforms: Transforms) -> Result<(Self, Backlog), String> {
         let ingest = Arc::new(HttpIngestor::new(api_key));
 
         let (signal_sender, signal_receiver) = flume::bounded(DEFAULT_QUEUE_LENGTH);
         let (flush_sender, flush_receiver) = flume::unbounded();
-        let (backlog, is_backlog_empty, backlog_sender) = Backlog::new(ingest.clone());
+        let backlog = Backlog::new(ingest.clone(), signal_sender.clone());
 
         let instance = Self {
             exit: false,
@@ -47,12 +47,15 @@ impl Worker {
             ingest,
             transforms,
             signal_receiver,
+            signal_sender,
             flush_sender,
-            backlog_sender,
-            is_backlog_empty,
+            flush_receiver,
+            backlog_sender: backlog.signal_sender.clone(),
+            is_backlog_empty: backlog.is_empty.clone(),
+            backlog_flush_receiver: backlog.flush_receiver.clone(),
         };
 
-        Ok((instance, backlog, signal_sender, flush_receiver))
+        Ok((instance, backlog))
     }
 
     pub async fn has_valid_api_key(&self) -> bool {
@@ -60,6 +63,14 @@ impl Worker {
     }
 
     pub async fn start(&mut self) {
+        if let Err(err) = self.backlog_flush_receiver.recv_async().await {
+            eprintln!("[dlog::worker] Failed to receive ready signal: {}", err);
+        }
+
+        if let Err(err) = self.flush_sender.send_async(()).await {
+            eprintln!("[dlog::logger] Failed to send ready signal: {}", err);
+        }
+
         let mut last_check = Instant::now();
         while !self.exit {
             if let Ok(val) = timeout(MIN_LOOP_INTERVAL, self.signal_receiver.recv_async()).await {
@@ -74,8 +85,11 @@ impl Worker {
 
         self.flush().await;
         if let Err(err) = self.backlog_sender.send_async(BacklogSignal::Exit).await {
-            eprintln!("[dlog] Could not send exit signal to backlog: {}", err);
+            eprintln!("[dlog::worker] Could not send exit signal to backlog: {}", err);
         };
+        if let Err(err) = self.flush_sender.send_async(()).await {
+            eprintln!("[dlog::worker] Failed to respond to exit signal: {}", err);
+        }
     }
 
     async fn receive(&mut self, res: Result<Signal, RecvError>) {
@@ -83,8 +97,16 @@ impl Worker {
             Ok(Signal::Log(log)) => self.add(log).await,
             Ok(Signal::Flush) => {
                 self.flush().await;
-                if let Err(err) = self.flush_sender.send(()) {
-                    println!("[dlog] Failed to send flush signal: {}", err);
+                if let Err(err) = self.backlog_sender.send_async(BacklogSignal::Flush).await {
+                    eprintln!("[dlog::worker] Failed to send flush signal to backlog: {}", err);
+                }
+
+                if let Err(err) = self.backlog_flush_receiver.recv_async().await {
+                    eprintln!("[dlog::worker] Failed to receive flush signal from backlog: {}", err);
+                }
+
+                if let Err(err) = self.flush_sender.send_async(()).await {
+                    eprintln!("[dlog::worker] Failed to respond to flush signal: {}", err);
                 }
             }
             _ => self.exit = true,
@@ -101,15 +123,18 @@ impl Worker {
 
     async fn flush(&mut self) {
         if !self.queue.is_empty() {
-            let mut logs = self.queue.drain(..).collect::<Vec<Log>>();
+            let logs = self.queue.drain(..self.queue.len()).collect::<Vec<Log>>();
             if !self.is_backlog_empty.load(Ordering::Relaxed) {
                 if let Err(err) = self.backlog_sender.send_async(BacklogSignal::Entries(logs)).await {
-                    println!("[dlog] Failed to send signal: {}", err);
+                    eprintln!("[dlog::worker] Failed to send backlog signal: {}", err);
                 }
             } else if let Err(log) = self.ingest.log_async(&logs).await {
-                logs.push(log);
                 if let Err(err) = self.backlog_sender.send_async(BacklogSignal::Entries(logs)).await {
-                    println!("[dlog] Failed to send signal: {}", err);
+                    eprintln!("[dlog::worker] Failed to send backlog signal: {}", err);
+                }
+
+                if let Err(err) = self.signal_sender.send_async(Signal::Log(log)).await {
+                    eprintln!("[dlog::worker] Failed to send signal: {}", err);
                 }
             }
         }
