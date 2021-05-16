@@ -2,14 +2,15 @@ use flume::RecvError;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use tokio::time::timeout;
 
 use crate::backlog::{Backlog, BacklogSignal};
 use crate::ingest::HttpIngestor;
 use crate::models::Log;
 use crate::transforms::{Transform, Transforms};
+use std::cmp::min;
 
-const DEFAULT_QUEUE_LENGTH: usize = 1_000;
+const FLUSH_CHUNK_SIZE: usize = 1_000;
+const DEFAULT_QUEUE_LENGTH: usize = 100_000;
 const MIN_FLUSH_INTERVAL: Duration = Duration::from_secs(1);
 const MIN_LOOP_INTERVAL: Duration = Duration::from_millis(50);
 
@@ -37,7 +38,7 @@ impl Worker {
     pub fn new(api_key: String, transforms: Transforms) -> Result<(Self, Backlog), String> {
         let ingest = Arc::new(HttpIngestor::new(api_key));
 
-        let (signal_sender, signal_receiver) = flume::bounded(DEFAULT_QUEUE_LENGTH);
+        let (signal_sender, signal_receiver) = flume::unbounded();
         let (flush_sender, flush_receiver) = flume::unbounded();
         let backlog = Backlog::new(ingest.clone(), signal_sender.clone());
 
@@ -73,10 +74,11 @@ impl Worker {
 
         let mut last_check = Instant::now();
         while !self.exit {
-            if let Ok(val) = timeout(MIN_LOOP_INTERVAL, self.signal_receiver.recv_async()).await {
-                self.receive(val).await;
+            while let Ok(val) = self.signal_receiver.try_recv() {
+                self.receive(Ok(val)).await;
             }
 
+            tokio::time::sleep(MIN_LOOP_INTERVAL).await;
             if last_check.elapsed() >= MIN_FLUSH_INTERVAL {
                 last_check = Instant::now();
                 self.flush().await;
@@ -116,14 +118,14 @@ impl Worker {
     async fn add(&mut self, mut log: Log) {
         self.transforms.apply(&mut log);
         self.queue.push(log);
-        if self.queue.len() >= DEFAULT_QUEUE_LENGTH {
+        if self.queue.len() >= FLUSH_CHUNK_SIZE {
             self.flush().await;
         }
     }
 
     async fn flush(&mut self) {
         if !self.queue.is_empty() {
-            let logs = self.queue.drain(..self.queue.len()).collect::<Vec<Log>>();
+            let logs = self.queue.drain(..min(self.queue.len(), FLUSH_CHUNK_SIZE)).collect::<Vec<Log>>();
             if !self.is_backlog_empty.load(Ordering::Relaxed) {
                 if let Err(err) = self.backlog_sender.send_async(BacklogSignal::Entries(logs)).await {
                     eprintln!("[dlog::worker] Failed to send backlog signal: {}", err);
