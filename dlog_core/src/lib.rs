@@ -78,7 +78,7 @@ impl Logger {
     }
 
     pub fn flush(&self) -> Result<(), String> {
-        if let Err(err) = self.signal_sender.send(Signal::Flush) {
+        if let Err(err) = self.signal_sender.send_timeout(Signal::Flush, FLUSH_TIMEOUT) {
             return Err(format!("[dlog::logger] Failed to send thread signal: {}", err));
         }
 
@@ -91,7 +91,7 @@ impl Logger {
     }
 
     pub fn clean_up(&self) {
-        match self.signal_sender.send(Signal::Exit) {
+        match self.signal_sender.send_timeout(Signal::Exit, FLUSH_TIMEOUT) {
             Err(err) => println!(
                 "[dlog::logger] Could not send exit signal, some logs might be lost: {}",
                 err

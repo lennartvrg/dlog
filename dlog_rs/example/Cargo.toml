@@ -9,4 +9,4 @@ edition = "2018"
 [dependencies]
 log = "0.4.14"
 tokio = "1.6.0"
-dlog_rs = { version = "1.1.4", path = ".." }
+dlog_rs = { version = "1.1.5", path = ".." }
