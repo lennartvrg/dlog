@@ -8,6 +8,6 @@ fn main() {
         .with_credit_card_sanitizer()
         .build();
 
-    log::info!("Hello, world 4000000760000002");
+    log::info!("Hello, world!");
     log::logger().flush();
 }
