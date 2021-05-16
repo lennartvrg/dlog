@@ -1,6 +1,6 @@
 [package]
 name = "dlog_core"
-version = "1.1.3"
+version = "1.1.4"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 edition = "2018"
 license = "MIT"
@@ -11,12 +11,12 @@ readme = "README.md"
 
 [dependencies]
 regex = "1.5.4"
-futures = { version = "0.3.14", default-features = false }
+futures = { version = "0.3.15", default-features = false }
 serde_json = { version = "1.0.64", default-features = false }
 directories = { version = "3.0.2", default-features = false }
 static_init = { version = "1.0.1", default-features = false }
-tokio = { version = "1.5.0", default-features = false, features = ["time", "macros"] }
+tokio = { version = "1.6.0", default-features = false, features = ["time", "macros"] }
 flume = { version = "0.10.5", default-features = false, features = ["async"] }
-serde = { version = "1.0.125", default-features = false, features = ["derive"] }
+serde = { version = "1.0.126", default-features = false, features = ["derive"] }
 chrono = { version = "0.4.19", default-features = false, features = ["clock", "serde"] }
 reqwest = { version = "0.11.3", default-features = false, features = ["json", "blocking", "rustls-tls"] }

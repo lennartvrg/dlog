@@ -42,11 +42,15 @@ impl Logger {
         });
 
         match valid_rx.recv() {
-            Err(err) => panic!(
-                "[dlog::logger] Internal error: The API_KEY channel is closed (Receiving end) | {}",
-                err
-            ),
+            Err(err) => {
+                runtime.shutdown_background();
+                panic!(
+                    "[dlog::logger] Internal error: The API_KEY channel is closed (Receiving end) | {}",
+                    err
+                )
+            },
             Ok(false) => {
+                runtime.shutdown_background();
                 return Err(String::from(
                     "[dlog::logger] Please configure dlog with a valid API_KEY",
                 ))

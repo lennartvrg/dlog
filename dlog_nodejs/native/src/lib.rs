@@ -20,11 +20,11 @@ fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
     let options = cx.argument::<JsObject>(1)?;
     let sanitize_emails = options.get(&mut cx, "sanitize_emails").map_or(false, |kv| {
         kv.downcast::<JsBoolean, _>(&mut cx)
-            .map_or(false, |kv| kv.value(&mut cx))
+            .map_or(true, |kv| kv.value(&mut cx))
     });
     let sanitize_credit_cards = options.get(&mut cx, "sanitize_credit_cards").map_or(false, |kv| {
         kv.downcast::<JsBoolean, _>(&mut cx)
-            .map_or(false, |kv| kv.value(&mut cx))
+            .map_or(true, |kv| kv.value(&mut cx))
     });
 
     let mut transforms = Transforms::new();

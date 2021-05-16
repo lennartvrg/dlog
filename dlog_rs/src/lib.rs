@@ -28,7 +28,11 @@ mod logger;
 /// }
 /// ```
 pub fn configure(api_key: impl Into<String>) {
-    Builder::new().with_str_api_key(api_key).build();
+    Builder::new()
+        .with_str_api_key(api_key)
+        .with_email_sanitizer()
+        .with_credit_card_sanitizer()
+        .build();
 }
 
 /// The builder can be used to more finely configure dlog to best suit your needs.
@@ -127,7 +131,7 @@ impl Builder {
 
         let logger = DlogLogger::new(native, level);
         if let Err(err) = log::set_boxed_logger(Box::new(logger)) {
-            panic!("[dlog] Failed to configure dlog: {}", err)
+            panic!("{}", err)
         }
     }
 }
