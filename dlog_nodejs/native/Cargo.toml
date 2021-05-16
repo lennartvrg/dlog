@@ -1,6 +1,6 @@
 [package]
 name = "dlog_nodejs"
-version = "1.1.4"
+version = "1.1.5"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 license = "MIT"
 build = "build.rs"
@@ -20,4 +20,4 @@ serde = { version = "1.0.126", default-features = false }
 once_cell = { version = "1.7.2", default-features = false }
 serde_json = { version = "1.0.64", default-features = false }
 
-dlog_core = { version = "1.1.4", path = "../../dlog_core" }
+dlog_core = { version = "1.1.5", path = "../../dlog_core" }
