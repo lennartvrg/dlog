@@ -168,7 +168,7 @@ impl Backlog {
     async fn send_log(&self, message: impl Into<String>) {
         let _ = self
             .log_sender
-            .send_async(Signal::Log(Log::new(Priority::Critical, message)))
+            .send_async(Signal::Log(Log::new(Priority::Trace, message)))
             .await;
     }
 

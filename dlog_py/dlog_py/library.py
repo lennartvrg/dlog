@@ -3,7 +3,7 @@ from .dlog_py import PythonLogger as _PythonLogger
 
 
 class DlogLogger(logging.StreamHandler):
-    def __init__(self, api_key, sanitize_emails=False, sanitize_credit_cards=False):
+    def __init__(self, api_key, sanitize_emails=True, sanitize_credit_cards=True):
         logging.StreamHandler.__init__(self)
         try:
             self.instance = _PythonLogger(api_key, sanitize_emails, sanitize_credit_cards)

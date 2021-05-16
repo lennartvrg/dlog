@@ -32,11 +32,11 @@ impl HttpIngestor {
     pub async fn log_async(&self, logs: &[Log]) -> Result<(), Log> {
         match self.send_async(LogRequest::new(logs)).await {
             Err(err) => Err(Log::new(
-                Priority::Critical,
+                Priority::Trace,
                 format!("[dlog] API connection error: {}", err),
             )),
             Ok(val) if !val.status().is_success() => Err(Log::new(
-                Priority::Critical,
+                Priority::Trace,
                 format!("[dlog] Log ingestion failed: {}", val.text().await.unwrap_or_default()),
             )),
             _ => Ok(()),
