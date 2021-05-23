@@ -107,7 +107,8 @@ jobs:
     runs-on: ${{ matrix.OS }}
     container:
       image: arm32v7/rust
-      options: --entrypoint bash
+      options: >-
+        --entrypoint bash
     defaults:
       run:
         working-directory: ./dlog_py
