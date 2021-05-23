@@ -105,7 +105,6 @@ jobs:
 
   arm:
     runs-on: ${{ matrix.OS }}
-    container: arm32v7/rust:1.52.1
     defaults:
       run:
         working-directory: ./dlog_py
@@ -146,4 +145,5 @@ jobs:
       - name: Publish
         env:
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
+          PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
         run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
