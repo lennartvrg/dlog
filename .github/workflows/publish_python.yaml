@@ -105,9 +105,6 @@ jobs:
 
   arm:
     runs-on: ${{ matrix.OS }}
-    container:
-      image: arm32v7/rust
-      options: "--entrypoint /bin/bash"
     defaults:
       run:
         working-directory: ./dlog_py
@@ -145,6 +142,7 @@ jobs:
         run: echo "Building for ${{ matrix.TARGET }}"
 
       - name: Publish
+        container: arm32v7/rust
         env:
           PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
