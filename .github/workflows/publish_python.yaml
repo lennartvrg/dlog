@@ -145,5 +145,4 @@ jobs:
       - name: Publish
         env:
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
-          PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
-        run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
+        run: maturin publish --target ${{ matrix.TARGET }} -i python --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
