@@ -105,6 +105,7 @@ jobs:
 
   arm:
     runs-on: ${{ matrix.OS }}
+    container: arm32v7/rust
     defaults:
       run:
         working-directory: ./dlog_py
@@ -118,7 +119,6 @@ jobs:
         ]
         include:
           - OS: ubuntu-latest
-            CROSS: true
             TARGET: arm-unknown-linux-gnueabihf
     steps:
       - name: Checkout the repository
@@ -146,4 +146,4 @@ jobs:
         env:
           PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
-        run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
+        run: maturin build --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
