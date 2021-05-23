@@ -114,7 +114,7 @@ jobs:
             arm-unknown-linux-gnueabihf,
         ]
         python-version: [
-            3.8
+            3.6
         ]
         include:
           - OS: ubuntu-latest
@@ -144,5 +144,6 @@ jobs:
 
       - name: Publish
         env:
+          PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
-        run: maturin publish --target ${{ matrix.TARGET }} -i python --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
+        run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
