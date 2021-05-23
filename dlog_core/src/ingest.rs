@@ -8,12 +8,22 @@ pub struct HttpIngestor {
     api_key: String,
 }
 
+const KEEP_ALIVE: std::time::Duration = std::time::Duration::from_secs(5);
+
 impl HttpIngestor {
-    pub fn new(api_key: String) -> Self {
-        Self {
-            client: reqwest::Client::new(),
+    pub fn new(api_key: String) -> Result<Self, String> {
+        let client = reqwest::ClientBuilder::new()
+            .connection_verbose(false)
+            .tcp_keepalive(KEEP_ALIVE)
+            .use_rustls_tls()
+            .https_only(true)
+            .build()
+            .map_err(|err| format!("Failed to build reqwest client: {}", err))?;
+
+        Ok(Self {
+            client,
             api_key,
-        }
+        })
     }
 
     pub async fn has_valid_api_key(&self) -> bool {
