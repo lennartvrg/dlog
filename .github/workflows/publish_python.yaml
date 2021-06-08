@@ -105,8 +105,6 @@ jobs:
 
   arm:
     runs-on: ${{ matrix.OS }}
-    container:
-      image: "lennartvrg/rust-arm32v7"
     defaults:
       run:
         working-directory: ./dlog_py
@@ -124,21 +122,6 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install maturin
-        run: python -m pip install --upgrade pip maturin
-
-      - name: Setup cargo toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.TARGET }}
-          override: true
 
       - name: Build configuration
         run: echo "Building for ${{ matrix.TARGET }}"
