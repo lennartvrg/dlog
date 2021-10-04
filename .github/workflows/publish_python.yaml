@@ -144,7 +144,11 @@ jobs:
         run: echo "Building for ${{ matrix.TARGET }}"
 
       - name: Publish
+        uses: docker://arm32v7/rust
         env:
-          PYO3_CROSS_LIB_DIR: "/opt/python/cp36-cp36m/lib"
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
-        run: maturin build --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+          pip3 install maturin
+          maturin build --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
