@@ -1,4 +1,4 @@
-#![crate_name = "dlog"]
+#![crate_name = "dlog_rs"]
 use dlog_core::transforms::Transforms;
 use log::Level;
 
