@@ -1,4 +1,4 @@
-#![crate_name = "dlog_rs"]
+#![crate_name = "dlog"]
 use dlog_core::transforms::Transforms;
 use log::Level;
 
@@ -19,7 +19,7 @@ mod logger;
 /// extern crate log;
 ///
 /// fn main() {
-///     dlog_rs::configure("<API_KEY>");
+///     dlog::configure("<API_KEY>");
 ///
 ///     info!("Hello from Rust!");
 ///
@@ -43,7 +43,7 @@ pub fn configure(api_key: impl Into<String>) {
 /// #[macro_use]
 /// extern crate log;
 ///
-/// use dlog_rs::Builder;
+/// use dlog::Builder;
 ///
 /// fn main() {
 ///     Builder::new()

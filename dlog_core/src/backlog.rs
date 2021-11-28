@@ -152,11 +152,9 @@ impl Backlog {
         if let Some(file) = Self::get_file(&self.dirs, false) {
             let reader = BufReader::new(file);
             let mut logs = Vec::new();
-            for line in reader.lines() {
-                if let Ok(line) = line {
-                    if let Ok(log) = serde_json::from_str::<Log>(&line) {
-                        logs.push(log);
-                    }
+            for line in reader.lines().flatten() {
+                if let Ok(log) = serde_json::from_str::<Log>(&line) {
+                    logs.push(log);
                 }
             }
             logs.append(&mut self.queue);

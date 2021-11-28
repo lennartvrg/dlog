@@ -2,11 +2,11 @@
 name = "example"
 version = "0.1.0"
 authors = ["Lennart Voorgang <lennart@voorgang.eu>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 log = "0.4.14"
-tokio = "1.7.1"
-dlog_rs = { version = "1.1.5", path = ".." }
+tokio = "1.13.0"
+dlog_rs = { version = "1.1.6", path = ".." }

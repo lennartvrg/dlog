@@ -32,7 +32,7 @@ impl HttpIngestor {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     pub async fn check(&self) -> bool {
@@ -55,7 +55,7 @@ impl HttpIngestor {
 
     async fn send_async<T: serde::Serialize + Sized>(&self, request: T) -> Result<reqwest::Response, reqwest::Error> {
         self.client
-            .post("https://log.dlog.cloud")
+            .post("https://log.dlog.sh")
             .json(&request)
             .header("API_KEY", HeaderValue::from_str(&self.api_key).unwrap())
             .timeout(std::time::Duration::from_secs(5))
