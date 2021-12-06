@@ -35,7 +35,7 @@ fn convert_level(level: Level) -> Priority {
     match level {
         Level::Error => Priority::Error,
         Level::Warn => Priority::Warning,
-        Level::Info => Priority::Informational,
+        Level::Info => Priority::Info,
         Level::Debug => Priority::Debug,
         Level::Trace => Priority::Trace,
     }
