@@ -1,17 +1,17 @@
 use log::Level;
 
-const SLEEP: std::time::Duration = std::time::Duration::from_micros(50);
+const SLEEP: std::time::Duration = std::time::Duration::from_micros(1800);
 
 #[tokio::main]
 async fn main() {
-    dlog::Builder::new()
+    dlog_rs::Builder::new()
         .with_env_api_key("DLOG_API_KEY")
         .with_level(Level::Debug)
         .with_email_sanitizer()
         .with_credit_card_sanitizer()
         .build();
 
-    for i in 0..1_000_000 {
+    for i in 0..100_000_000 {
         log::debug!("Starting iteration: {}", i);
         log::info!(
             "Tracing timestamp: {}",
