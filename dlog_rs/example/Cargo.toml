@@ -8,5 +8,5 @@ edition = "2021"
 
 [dependencies]
 log = "0.4.14"
-tokio = "1.13.0"
+tokio = "1.15.0"
 dlog_rs = { version = "1.1.6", path = ".." }

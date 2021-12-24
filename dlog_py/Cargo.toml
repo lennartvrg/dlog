@@ -15,7 +15,7 @@ name = "dlog_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.15.0", features = ["extension-module"] }
+pyo3 = { version = "0.15.1", features = ["extension-module"] }
 
 dlog_core = { version = "1.1.6", path = "../dlog_core" }
 
