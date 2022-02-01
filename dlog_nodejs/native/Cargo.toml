@@ -16,8 +16,8 @@ neon-build = "0.9.1"
 
 [dependencies]
 neon = { version = "0.9.1", default-features = false, features = ["napi-4"] }
-serde = { version = "1.0.132", default-features = false }
+serde = { version = "1.0.136", default-features = false }
 once_cell = { version = "1.9.0", default-features = false }
-serde_json = { version = "1.0.73", default-features = false }
+serde_json = { version = "1.0.78", default-features = false }
 
 dlog_core = { version = "1.1.6", path = "../../dlog_core" }
