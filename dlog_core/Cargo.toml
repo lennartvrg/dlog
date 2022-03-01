@@ -11,7 +11,7 @@ readme = "README.md"
 
 [dependencies]
 regex = "1.5.4"
-futures = { version = "0.3.19", default-features = false }
+futures = { version = "0.3.21", default-features = false }
 serde_json = { version = "1.0.78", default-features = false }
 directories = { version = "4.0.1", default-features = false }
 static_init = { version = "1.0.2", default-features = false }
