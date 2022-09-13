@@ -18,13 +18,11 @@ fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
     let api_key = cx.argument::<JsString>(0)?.value(&mut cx);
 
     let options = cx.argument::<JsObject>(1)?;
-    let sanitize_emails = options.get(&mut cx, "sanitize_emails").map_or(false, |kv| {
-        kv.downcast::<JsBoolean, _>(&mut cx)
-            .map_or(true, |kv| kv.value(&mut cx))
+    let sanitize_emails = options.get::<JsBoolean, _, _>(&mut cx, "sanitize_emails").map_or(false, |kv| {
+        kv.value(&mut cx)
     });
-    let sanitize_credit_cards = options.get(&mut cx, "sanitize_credit_cards").map_or(false, |kv| {
-        kv.downcast::<JsBoolean, _>(&mut cx)
-            .map_or(true, |kv| kv.value(&mut cx))
+    let sanitize_credit_cards = options.get::<JsBoolean, _, _>(&mut cx, "sanitize_credit_cards").map_or(false, |kv| {
+        kv.value(&mut cx)
     });
 
     let mut transforms = Transforms::new();
@@ -39,7 +37,7 @@ fn configure(mut cx: FunctionContext) -> JsResult<JsBox<Logger>> {
 
 fn log(mut cx: FunctionContext) -> JsResult<JsUndefined> {
     let level = cx.level()?;
-    let message = cx.message()?.value(&mut cx);
+    let message = cx.message()?;
     match cx.context()?.0.log(level, message) {
         Err(err) => cx.throw_error(err),
         Ok(_) => Ok(JsUndefined::new(&mut cx)),

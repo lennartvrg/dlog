@@ -1,6 +1,6 @@
 [package]
 name = "dlog_nodejs"
-version = "1.1.5"
+version = "1.1.6"
 authors = ["Lennart Voorgang <lennart@voorgang.dev>"]
 license = "MIT"
 build = "build.rs"
@@ -12,12 +12,12 @@ name = "dlog_nodejs"
 crate-type = ["cdylib"]
 
 [build-dependencies]
-neon-build = "0.8.1"
+neon-build = "0.10.1"
 
 [dependencies]
-neon = { version = "0.8.1", default-features = false, features = ["napi-4"] }
-serde = { version = "1.0.126", default-features = false }
-once_cell = { version = "1.7.2", default-features = false }
-serde_json = { version = "1.0.64", default-features = false }
+neon = { version = "0.10.1", default-features = false, features = ["napi-4"] }
+serde = { version = "1.0.144", default-features = false }
+once_cell = { version = "1.14.0", default-features = false }
+serde_json = { version = "1.0.85", default-features = false }
 
-dlog_core = { version = "1.1.5", path = "../../dlog_core" }
+dlog_core = { version = "1.1.6", path = "../../dlog_core" }

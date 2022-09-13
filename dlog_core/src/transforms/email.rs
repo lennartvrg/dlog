@@ -11,8 +11,8 @@ pub struct EmailTransform;
 
 impl Transform for EmailTransform {
     fn apply(&self, log: &mut Log) {
-        log.message = log
-            .message
+        log.text = log
+            .text
             .split(' ')
             .map(|val| match EMAIL.is_match(val) {
                 true => "•".repeat(val.len()),

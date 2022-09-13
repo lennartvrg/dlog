@@ -47,9 +47,8 @@ fn convert_priority(level: i32) -> Priority {
         50 => Priority::Critical,
         40 => Priority::Error,
         30 => Priority::Warning,
-        20 => Priority::Informational,
-        10 => Priority::Debug,
-        _ => Priority::None,
+        20 => Priority::Info,
+        _ => Priority::Debug
     }
 }
 
