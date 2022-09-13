@@ -1,5 +1,5 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use time::OffsetDateTime;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,29 +19,29 @@ impl Display for Priority {
             Self::Critical => write!(f, "Critical"),
             Self::Error => write!(f, "Error"),
             Self::Warning => write!(f, "Warning"),
-            Self::Info => write!(f, "Info"),
+            Self::Info => write!(f, "Informational"),
             Self::Debug => write!(f, "Debug"),
             Self::Trace => write!(f, "Trace"),
-            Self::None => write!(f, "None"),
         }
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Log {
-    pub timestamp: DateTime<Utc>,
+    #[serde(with = "time::serde::rfc3339")]
+    pub timestamp: OffsetDateTime,
 
     pub priority: Priority,
 
-    pub message: String,
+    pub text: String,
 }
 
 impl Log {
     pub fn new(priority: Priority, message: impl Into<String>) -> Self {
         Self {
-            timestamp: Utc::now(),
+            timestamp: OffsetDateTime::now_utc(),
             priority,
-            message: message.into(),
+            text: message.into(),
         }
     }
 }

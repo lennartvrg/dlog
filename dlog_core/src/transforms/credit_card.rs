@@ -16,7 +16,7 @@ impl Transform for CreditCardTransform {
     fn apply(&self, log: &mut Log) {
         let mut counter = 0;
         let mut message = Vec::<String>::new();
-        for part in log.message.split(&[' ', '-'][..]) {
+        for part in log.text.split(&[' ', '-'][..]) {
             if CREDIT_CARD.is_match(part) {
                 message.push("•".repeat(16));
             } else if NUMERIC.is_match(part) {
@@ -37,7 +37,7 @@ impl Transform for CreditCardTransform {
                 counter = 0;
             }
         }
-        log.message = message.join(" ");
+        log.text = message.join(" ");
     }
 }
 

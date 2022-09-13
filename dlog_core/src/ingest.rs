@@ -49,7 +49,7 @@ impl HttpIngestor {
                 Priority::Trace,
                 format!("[dlog] Log ingestion failed: {}", val.text().await.unwrap_or_default()),
             )),
-            _ => Ok(()),
+            _=> Ok(()),
         }
     }
 
