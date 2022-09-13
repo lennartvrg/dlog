@@ -4,12 +4,12 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Priority {
-    Critical = 1,
-    Error = 2,
-    Warning = 3,
-    Info = 4,
-    Debug = 5,
-    Trace = 6,
+    Critical,
+    Error,
+    Warning,
+    Info,
+    Debug,
+    Trace,
 }
 
 impl Display for Priority {

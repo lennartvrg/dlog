@@ -6,4 +6,6 @@ const handler = (event) => {
 
 exports.lambda =  dlog.with_dlog(process.env.DLOG_API_KEY, handler)
 
-exports.lambda("Hello World");
+exports.lambda("Hello World 1");
+exports.lambda("Hello World 2");
+exports.lambda("Hello World 3");

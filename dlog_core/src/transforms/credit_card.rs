@@ -1,5 +1,6 @@
 use regex::Regex;
 use static_init::dynamic;
+use std::fmt::Write;
 
 use crate::models::Log;
 use crate::transforms::Transform;
@@ -31,7 +32,7 @@ impl Transform for CreditCardTransform {
                     message.append(&mut last_four);
                 }
             } else if part.trim().is_empty() {
-                message.last_mut().unwrap().push_str(&format!("{} ", part));
+                write!(message.last_mut().unwrap(), "{} ", part).unwrap();
             } else {
                 message.push(part.to_owned());
                 counter = 0;

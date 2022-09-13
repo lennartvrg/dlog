@@ -1,5 +1,8 @@
 name: Publish Python adapter
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
@@ -44,7 +47,8 @@ jobs:
         TARGET: [
             x86_64-apple-darwin,
             x86_64-pc-windows-msvc,
-            x86_64-unknown-linux-gnu
+            x86_64-unknown-linux-gnu,
+            arm-unknown-linux-gnueabi,
         ]
         python-version: [
             3.6,
@@ -54,11 +58,17 @@ jobs:
         ]
         include:
           - OS: macos-latest
+            CROSS: false
             TARGET: x86_64-apple-darwin
           - OS: windows-latest
+            CROSS: false
             TARGET: x86_64-pc-windows-msvc
           - OS: ubuntu-latest
+            CROSS: false
             TARGET: x86_64-unknown-linux-gnu
+          - OS: ubuntu-latest
+            CROSS: false
+            TARGET: arm-unknown-linux-gnueabi
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
@@ -81,7 +91,47 @@ jobs:
       - name: Build configuration
         run: echo "Building for ${{ matrix.TARGET }}"
 
+      - name: Build rust
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: -p dlog_py --release --target ${{ matrix.TARGET }}
+          use-cross: ${{ matrix.CROSS }}
+
       - name: Publish
         env:
           MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
         run: maturin publish --target ${{ matrix.TARGET }} --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}
+
+  arm:
+    runs-on: ${{ matrix.OS }}
+    defaults:
+      run:
+        working-directory: ./dlog_py
+    strategy:
+      matrix:
+        TARGET: [
+            arm-unknown-linux-gnueabihf,
+        ]
+        python-version: [
+            3.6
+        ]
+        include:
+          - OS: ubuntu-latest
+            TARGET: arm-unknown-linux-gnueabihf
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Build configuration
+        run: echo "Building for ${{ matrix.TARGET }}"
+
+      - name: Publish
+        uses: docker://arm32v7/rust
+        env:
+          MATURIN_PASSWORD: ${{ secrets.MATURIN_PASSWORD }}
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+          pip3 install maturin
+          maturin build --skip-existing --no-sdist --username ${{ secrets.MATURIN_USER }}

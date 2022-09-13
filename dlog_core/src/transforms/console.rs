@@ -6,7 +6,7 @@ use crate::transforms::Transform;
 
 pub struct ConsoleTransform;
 
-const FORMAT: &'static [FormatItem] = format_description!("[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour sign:mandatory]");
+const FORMAT: &[FormatItem] = format_description!("[year]-[month]-[day] [hour]:[minute]:[second] [offset_hour sign:mandatory]");
 
 impl Transform for ConsoleTransform {
     fn apply(&self, log: &mut Log) {

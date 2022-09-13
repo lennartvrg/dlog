@@ -36,7 +36,7 @@ pub struct Worker {
 
 impl Worker {
     pub fn new(api_key: String, transforms: Transforms) -> Result<(Self, Backlog), String> {
-        let ingest = Arc::new(HttpIngestor::new(api_key));
+        let ingest = Arc::new(HttpIngestor::new(api_key)?);
 
         let (signal_sender, signal_receiver) = flume::unbounded();
         let (flush_sender, flush_receiver) = flume::unbounded();
