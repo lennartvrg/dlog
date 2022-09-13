@@ -10,7 +10,6 @@ pub enum Priority {
     Info,
     Debug,
     Trace,
-    None,
 }
 
 impl Display for Priority {

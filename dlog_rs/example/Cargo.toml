@@ -8,9 +8,5 @@ edition = "2021"
 
 [dependencies]
 log = "0.4.14"
-<<<<<<< HEAD
-tokio = "1.16.1"
-=======
-tokio = "1.6.0"
->>>>>>> master
-dlog_rs = { version = "1.1.6", path = ".." }
+tokio = "1.21.0"
+dlog_rs = { version = "1.1.8", path = ".." }
